@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MuQore Innovation | Ideas • Code • Solutions</title>
+    <meta name="description" content="MuQore Innovation builds websites, mobile and desktop applications, AI automation, APIs and backend systems. Ideas • Code • Solutions." />
+    <meta name="theme-color" content="#050811" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f9fc" media="(prefers-color-scheme: light)" />
+    <meta property="og:title" content="MuQore Innovation" />
+    <meta property="og:description" content="Websites, mobile and desktop apps, AI automation, APIs and backend systems. Ideas • Code • Solutions." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/assets/aistudio/WhatsApp_Image_2026-10-28_at_11.23.39_AM_58cbf8fc.jpeg" />
+    <script>
+      // Apply the saved theme before first paint to avoid a light/dark flash
+      (function () {
+        try {
+          var t = localStorage.getItem('muqore-theme');
+          if (t === 'light') document.documentElement.classList.remove('dark');
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
