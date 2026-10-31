@@ -3,10 +3,10 @@
  * Company facts are derived from the same data files the website renders,
  * so the assistant never drifts from what the site actually says.
  */
-import { servicesData } from './servicesData';
-import { websitePricingPlans } from './pricingData';
-import { leadershipData } from './leadershipData';
-import { CONTACT } from '../config/contact';
+import { servicesData } from './servicesData.js';
+import { websitePricingPlans } from './pricingData.js';
+import { leadershipData } from './leadershipData.js';
+import { CONTACT } from '../config/contact.js';
 
 export type ChatLanguage = 'urdu' | 'roman_urdu' | 'english';
 

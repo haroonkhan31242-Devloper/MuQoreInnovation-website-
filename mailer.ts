@@ -1,5 +1,5 @@
 import nodemailer, { type Transporter } from 'nodemailer';
-import { CONTACT } from './src/config/contact.ts';
+import { CONTACT } from './src/config/contact.js';
 
 /**
  * Sends form submissions to the MuQore inbox over SMTP.
