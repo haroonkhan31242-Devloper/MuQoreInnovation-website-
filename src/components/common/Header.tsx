@@ -99,15 +99,15 @@ export const Header: React.FC = () => {
       <div className="container-x">
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
-            {/* Company logo exactly as supplied; full image at its own 2000×1492 ratio */}
+            {/* Supplied company logo, cropped to the mark itself (1085×1018) */}
             <img
-              src="/assets/brand/logo-header.jpg"
+              src="/assets/brand/logo-mark.jpg"
               alt=""
-              width={2000}
-              height={1492}
+              width={1085}
+              height={1018}
               decoding="async"
               fetchPriority="high"
-              className="block h-[42px] w-auto shrink-0 rounded-lg ring-1 ring-line"
+              className="block h-[42px] w-auto shrink-0 rounded-lg object-contain ring-1 ring-line"
             />
             <span className="flex flex-col leading-none">
               <span className="font-display text-xl font-bold tracking-tight text-fg">

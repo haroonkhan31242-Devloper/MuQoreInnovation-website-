@@ -19,7 +19,7 @@ no email service, API key or backend is involved.
 - `src/index.css` — design tokens for the brand palette and light/dark themes
 - `src/config/contact.ts` — company email and phone numbers (single source)
 - `src/services/mailtoService.ts` — builds and opens the pre-filled email
-- `public/assets/brand/logo-header.jpg` — company logo in the header and footer
+- `public/assets/brand/logo-mark.jpg` — company logo (header, footer, favicon)
 - `app.ts` + `mailer.ts` — optional SMTP email API (`/api/quote`, `/api/contact`);
   the forms do not call it
 - `server.ts` — local server (Vite in development, `dist/` in production)

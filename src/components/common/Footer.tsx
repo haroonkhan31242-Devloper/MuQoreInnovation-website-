@@ -16,15 +16,15 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Link to="/" className="inline-flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
-              {/* Same supplied logo as the header, at its own 2000×1492 ratio */}
+              {/* Same supplied logo as the header, cropped to the mark itself */}
               <img
-                src="/assets/brand/logo-header.jpg"
+                src="/assets/brand/logo-mark.jpg"
                 alt=""
-                width={2000}
-                height={1492}
+                width={1085}
+                height={1018}
                 loading="lazy"
                 decoding="async"
-                className="block h-11 w-auto shrink-0 rounded-lg ring-1 ring-line"
+                className="block h-11 w-auto shrink-0 rounded-lg object-contain ring-1 ring-line"
               />
               <span className="font-display text-2xl font-bold tracking-tight text-fg">
                 MuQore<span className="text-accent-ink">.</span>
