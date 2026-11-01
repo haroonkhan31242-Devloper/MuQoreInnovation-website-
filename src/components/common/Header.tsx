@@ -6,7 +6,6 @@ import { ArrowRight, ChevronDown, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { servicesData } from '../../data/servicesData';
 import { ServiceIcon } from '../ui/ServiceIcon';
-import { BrandMark } from '../brand/BrandMark';
 import { EASE_OUT } from '../ui/Reveal';
 
 const NAV = [
@@ -100,7 +99,16 @@ export const Header: React.FC = () => {
       <div className="container-x">
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
-            <BrandMark size={42} />
+            {/* Company logo exactly as supplied; full image at its own 2000×1492 ratio */}
+            <img
+              src="/assets/brand/logo-header.jpg"
+              alt=""
+              width={2000}
+              height={1492}
+              decoding="async"
+              fetchPriority="high"
+              className="block h-[42px] w-auto shrink-0 rounded-lg ring-1 ring-line"
+            />
             <span className="flex flex-col leading-none">
               <span className="font-display text-xl font-bold tracking-tight text-fg">
                 MuQore<span className="text-accent-ink">.</span>

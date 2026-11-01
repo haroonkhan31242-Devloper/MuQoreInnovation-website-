@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { ArrowUp, Mail, Phone } from 'lucide-react';
 import { servicesData } from '../../data/servicesData';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../../config/contact';
-import { BrandMark } from '../brand/BrandMark';
 import { ProjectCta } from '../project/ProjectCta';
 
 export const Footer: React.FC = () => {
@@ -17,7 +16,16 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Link to="/" className="inline-flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
-              <BrandMark size={44} />
+              {/* Same supplied logo as the header, at its own 2000×1492 ratio */}
+              <img
+                src="/assets/brand/logo-header.jpg"
+                alt=""
+                width={2000}
+                height={1492}
+                loading="lazy"
+                decoding="async"
+                className="block h-11 w-auto shrink-0 rounded-lg ring-1 ring-line"
+              />
               <span className="font-display text-2xl font-bold tracking-tight text-fg">
                 MuQore<span className="text-accent-ink">.</span>
               </span>
