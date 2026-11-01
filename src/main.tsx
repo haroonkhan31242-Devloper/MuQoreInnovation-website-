@@ -3,7 +3,7 @@ import App from './App.tsx';
 import {installDevtoolsGuard} from './utils/devtoolsGuard';
 import './index.css';
 
-// Production only, so local development keeps DevTools available
-if (import.meta.env.PROD) installDevtoolsGuard();
+// On everywhere; set VITE_ALLOW_DEVTOOLS="true" in .env to debug locally
+if (import.meta.env.VITE_ALLOW_DEVTOOLS !== 'true') installDevtoolsGuard();
 
 createRoot(document.getElementById('root')!).render(<App />);

@@ -1,5 +1,5 @@
 /**
- * Discourages casual inspection of the production site: blocks the common
+ * Discourages casual inspection of the site: blocks the common
  * DevTools / view-source shortcuts and the right-click menu, and leaves a
  * one-time console notice when DevTools looks docked open.
  *
