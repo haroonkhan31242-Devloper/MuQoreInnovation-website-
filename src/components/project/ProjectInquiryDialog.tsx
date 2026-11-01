@@ -1,32 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { AlertCircle, ArrowRight, CheckCircle2, Loader2, Send } from 'lucide-react';
+import { ArrowRight, Send } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { FormField, isValidEmail } from '../ui/FormField';
+import { EmailDraftReady } from '../ui/EmailDraftReady';
 import { servicesData } from '../../data/servicesData';
-import { CONTACT, mailtoHref } from '../../config/contact';
-import { EmailSendError, SUCCESS_MESSAGE, isValidPhone, sendSubmission } from '../../services/emailService';
+import { EmailDraft, composeDraft, isValidPhone, openEmailDraft } from '../../services/mailtoService';
 
-const EMPTY = { name: '', email: '', phone: '', serviceSlug: 'website-development', message: '', website: '' };
+const EMPTY = { name: '', email: '', phone: '', serviceSlug: 'website-development', message: '' };
 type Errors = Partial<Record<'name' | 'email' | 'phone' | 'message', string>>;
 
 /**
- * Short project inquiry that works from any page. It is emailed to the team
- * through the shared EmailJS service, like the full quote form.
+ * Short project inquiry that works from any page. Like the other forms it
+ * opens a pre-filled email in the visitor's own email app (mailto:).
  */
 export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  // The draft opened in the visitor's email app; null while editing the form
+  const [draft, setDraft] = useState<EmailDraft | null>(null);
   const [referenceId, setReferenceId] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Show the empty form again when reopened after a completed submission
+  // Reopening shows the form again, with everything entered still there
   useEffect(() => {
-    if (open && status === 'success') setStatus('idle');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!open) setDraft(null);
   }, [open]);
 
   const set = (key: keyof typeof EMPTY, value: string) => {
@@ -34,9 +33,8 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
     if (key in errors) setErrors((e) => ({ ...e, [key]: undefined }));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status === 'submitting') return;
     const er: Errors = {};
     if (!form.name.trim()) er.name = 'Please enter your name.';
     if (!form.email.trim()) er.email = 'Please enter your email address.';
@@ -49,57 +47,45 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
       return;
     }
 
-    setStatus('submitting');
-    const generatedRef = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    // One reference per inquiry: editing and reopening keeps the same one
+    const ref = referenceId || `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
     const serviceTitle = servicesData.find((sv) => sv.slug === form.serviceSlug)?.title ?? form.serviceSlug;
-    try {
-      await sendSubmission({
-        formType: 'Project inquiry',
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        subject: `Project inquiry ${generatedRef}: ${serviceTitle}`,
-        service: serviceTitle,
-        projectDescription: form.message,
-        referenceId: generatedRef,
-        website: form.website,
-      });
-      setReferenceId(generatedRef);
-      // Clear only once EmailJS has confirmed delivery
-      setForm(EMPTY);
-      setStatus('success');
-    } catch (err) {
-      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't send your inquiry.");
-      setStatus('error');
-    }
+    const next = composeDraft({
+      formType: 'Project inquiry',
+      subject: `New Project Request – ${serviceTitle} (${ref})`,
+      fields: [
+        ['Name', form.name],
+        ['Email Address', form.email],
+        ['Phone', form.phone],
+        ['Project Type', serviceTitle],
+        ['Reference', ref],
+      ],
+      messageLabel: 'Message',
+      message: form.message,
+    });
+    // The form keeps its values so nothing is lost if no email app opens
+    if (!openEmailDraft(next)) return;
+    setReferenceId(ref);
+    setDraft(next);
   };
 
   return (
     <Modal open={open} onClose={onClose} labelledBy="inquiry-title">
       <div className="p-6 sm:p-8">
         <AnimatePresence mode="wait" initial={false}>
-          {status === 'success' ? (
-            <motion.div key="ok" role="status" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="py-6 text-center">
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
-                <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
-              </span>
-              <h2 id="inquiry-title" className="mt-5 text-2xl font-bold text-fg">
-                Inquiry sent
-              </h2>
-              <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
-              <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">
-                Your reference is{' '}
-                <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent-ink">{referenceId}</strong>.
-              </p>
-              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <button type="button" onClick={onClose} className="btn btn-primary">
-                  Done
-                </button>
-                <Link to="/get-a-quote" onClick={onClose} className="btn btn-secondary">
-                  Add budget & timeline
-                </Link>
-              </div>
-            </motion.div>
+          {draft ? (
+            <EmailDraftReady
+              draft={draft}
+              reference={referenceId}
+              headingId="inquiry-title"
+              onEdit={() => setDraft(null)}
+              resetLabel="Start a new inquiry"
+              onReset={() => {
+                setForm(EMPTY);
+                setReferenceId('');
+                setDraft(null);
+              }}
+            />
           ) : (
             <motion.form key="form" ref={formRef} onSubmit={submit} noValidate initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
               <div className="pr-12">
@@ -107,27 +93,9 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
                 <h2 id="inquiry-title" className="mt-3 text-2xl font-bold text-fg sm:text-[1.75rem]">
                   Tell us about your idea
                 </h2>
-                <p className="mt-2 text-fg-muted">A few details are enough. We'll follow up with questions, a plan and an estimate.</p>
-              </div>
-
-              {status === 'error' && (
-                <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
-                  <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                  <p>
-                    {errorMessage} Your details are still in the form. You can also email{' '}
-                    <a href={mailtoHref('Project inquiry')} className="font-semibold underline">
-                      {CONTACT.email}
-                    </a>{' '}
-                    or call {CONTACT.phones[0].display}.
-                  </p>
-                </div>
-              )}
-
-              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                <label>
-                  Website
-                  <input tabIndex={-1} autoComplete="off" value={form.website} onChange={(e) => set('website', e.target.value)} />
-                </label>
+                <p className="mt-2 text-fg-muted">
+                  A few details are enough. Your email app opens with this filled in, so you just press Send.
+                </p>
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
@@ -162,18 +130,9 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
                 <Link to="/get-a-quote" onClick={onClose} className="link-accent justify-center text-sm">
                   Prefer the detailed form? <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <button type="submit" disabled={status === 'submitting'} className="btn btn-primary">
-                  {status === 'submitting' ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                      Sending…
-                    </>
-                  ) : (
-                    <>
-                      Send inquiry
-                      <Send className="icon-nudge h-4 w-4" aria-hidden="true" />
-                    </>
-                  )}
+                <button type="submit" className="btn btn-primary">
+                  Send email
+                  <Send className="icon-nudge h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             </motion.form>

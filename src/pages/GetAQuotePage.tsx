@@ -1,15 +1,15 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { AlertCircle, ArrowRight, Check, CheckCircle2, Loader2, ShieldCheck } from 'lucide-react';
+import { Check, Mail, Send } from 'lucide-react';
 import { servicesData } from '../data/servicesData';
 import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
 import { ServiceIcon } from '../components/ui/ServiceIcon';
 import { FormField, isValidEmail } from '../components/ui/FormField';
 import { usePageMeta } from '../components/ui/usePageMeta';
-import { CONTACT, mailtoHref } from '../config/contact';
-import { EmailSendError, SUCCESS_MESSAGE, sendSubmission } from '../services/emailService';
+import { EmailDraftReady } from '../components/ui/EmailDraftReady';
+import { EmailDraft, composeDraft, openEmailDraft } from '../services/mailtoService';
 
 const BUDGETS = ['$5k - $15k', '$15k - $35k', '$35k - $75k', '$75k+ Enterprise'];
 const TIMELINES = ['< 4 Weeks', '1 - 3 Months', '3 - 6 Months', 'Flexible Roadmap'];
@@ -34,7 +34,6 @@ const initialForm = (service: string) => ({
   projectDescription: '',
   featuresNeeded: [] as string[],
   agreeTerms: true,
-  website: '',
 });
 
 type Errors = Partial<Record<'name' | 'email' | 'projectDescription', string>>;
@@ -47,11 +46,9 @@ export const GetAQuotePage: React.FC = () => {
 
   const [form, setForm] = useState(() => initialForm(startService));
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  // The draft opened in the visitor's email app; null while editing the form
+  const [draft, setDraft] = useState<EmailDraft | null>(null);
   const [referenceId, setReferenceId] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  // What was sent, shown on the success screen after the form is cleared
-  const [summary, setSummary] = useState<[string, string][]>([]);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -68,9 +65,8 @@ export const GetAQuotePage: React.FC = () => {
   const toggleFeature = (feat: string) =>
     set('featuresNeeded', form.featuresNeeded.includes(feat) ? form.featuresNeeded.filter((f) => f !== feat) : [...form.featuresNeeded, feat]);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status === 'submitting') return;
     const er: Errors = {};
     if (!form.name.trim()) er.name = 'Please enter your name.';
     if (!form.email.trim()) er.email = 'Please enter your email address.';
@@ -82,38 +78,29 @@ export const GetAQuotePage: React.FC = () => {
       return;
     }
 
-    setStatus('submitting');
-    const generatedRef = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    // One reference per request: editing and reopening keeps the same one
+    const ref = referenceId || `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
     const serviceTitle = servicesData.find((s) => s.slug === form.serviceSlug)?.title ?? form.serviceSlug;
-    try {
-      await sendSubmission({
-        formType: 'Quote request',
-        name: form.name,
-        email: form.email,
-        company: form.company,
-        subject: `Quote request ${generatedRef}: ${serviceTitle}`,
-        service: serviceTitle,
-        budget: form.budgetRange,
-        timeline: form.timeline,
-        features: form.featuresNeeded,
-        projectDescription: form.projectDescription,
-        referenceId: generatedRef,
-        website: form.website,
-      });
-      setSummary([
-        ['Service', serviceTitle],
+    const next = composeDraft({
+      formType: 'Quote request',
+      subject: `New Project Request – ${serviceTitle} (${ref})`,
+      fields: [
+        ['Name', form.name],
+        ['Email Address', form.email],
+        ['Company', form.company],
+        ['Project Type', serviceTitle],
         ['Budget', form.budgetRange],
         ['Timeline', form.timeline],
-      ]);
-      setReferenceId(generatedRef);
-      // Clear only once EmailJS has confirmed delivery
-      setForm(initialForm(form.serviceSlug));
-      setStatus('success');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't submit your request.");
-      setStatus('error');
-    }
+        ['Features', form.featuresNeeded],
+        ['Reference', ref],
+      ],
+      messageLabel: 'Project Description',
+      message: form.projectDescription,
+    });
+    // The form keeps its values so nothing is lost if no email app opens
+    if (!openEmailDraft(next)) return;
+    setReferenceId(ref);
+    setDraft(next);
   };
 
   return (
@@ -132,45 +119,20 @@ export const GetAQuotePage: React.FC = () => {
       <section className="section pt-12 sm:pt-16">
         <div className="container-x max-w-5xl">
           <AnimatePresence mode="wait" initial={false}>
-            {status === 'success' ? (
-              <motion.div
-                key="success"
-                role="status"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card p-8 text-center sm:p-14"
-              >
-                <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
-                  <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
-                </span>
-                <h2 className="mt-6 text-3xl font-bold text-fg">Request sent</h2>
-                <p className="mx-auto mt-3 max-w-lg leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
-                <p className="mx-auto mt-3 max-w-lg leading-relaxed text-fg-muted">
-                  Your reference is{' '}
-                  <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent-ink">{referenceId}</strong>.
-                  Please mention it if you contact us at {CONTACT.email}.
-                </p>
-                <dl className="mx-auto mt-8 max-w-md divide-y divide-line rounded-2xl border border-line text-left text-sm">
-                  {summary.map(([k, v]) => (
-                    <div key={k} className="flex justify-between gap-4 px-5 py-3">
-                      <dt className="text-fg-subtle">{k}</dt>
-                      <dd className="font-semibold text-fg">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-                  <Link to="/" className="btn btn-primary">
-                    Back to home
-                  </Link>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setStatus('idle')}
-                  >
-                    Request another quote
-                  </button>
-                </div>
-              </motion.div>
+            {draft ? (
+              <div key="draft" className="card p-8 sm:p-14">
+                <EmailDraftReady
+                  draft={draft}
+                  reference={referenceId}
+                  onEdit={() => setDraft(null)}
+                  resetLabel="Request another quote"
+                  onReset={() => {
+                    setForm(initialForm(form.serviceSlug));
+                    setReferenceId('');
+                    setDraft(null);
+                  }}
+                />
+              </div>
             ) : (
               <motion.form
                 key="form"
@@ -182,26 +144,6 @@ export const GetAQuotePage: React.FC = () => {
                 exit={{ opacity: 0 }}
                 className="space-y-6"
               >
-                {status === 'error' && (
-                  <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                    <p>
-                      {errorMessage} Your details are still in the form. You can also email them to{' '}
-                      <a href={mailtoHref('Quote request')} className="font-semibold underline">
-                        {CONTACT.email}
-                      </a>
-                      .
-                    </p>
-                  </div>
-                )}
-
-                {/* Spam trap: hidden from people, often filled in by bots */}
-                <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                  <label>
-                    Website
-                    <input tabIndex={-1} autoComplete="off" name="website" value={form.website} onChange={(e) => set('website', e.target.value)} />
-                  </label>
-                </div>
                 <Step n={1} title="Your details">
                   <div className="grid gap-6 sm:grid-cols-3">
                     <FormField label="Name" required error={errors.name}>
@@ -307,21 +249,12 @@ export const GetAQuotePage: React.FC = () => {
 
                 <div className="flex flex-col-reverse items-stretch justify-between gap-4 pt-2 sm:flex-row sm:items-center">
                   <p className="flex items-center gap-2 text-sm text-fg-subtle">
-                    <ShieldCheck className="h-4 w-4 text-accent-ink" aria-hidden="true" />
-                    Your information is kept confidential.
+                    <Mail className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
+                    Opens your email app with this request filled in. You just press Send.
                   </p>
-                  <button type="submit" disabled={status === 'submitting'} className="btn btn-primary btn-lg">
-                    {status === 'submitting' ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                        Submitting…
-                      </>
-                    ) : (
-                      <>
-                        Submit request
-                        <ArrowRight className="icon-nudge h-4 w-4" aria-hidden="true" />
-                      </>
-                    )}
+                  <button type="submit" className="btn btn-primary btn-lg">
+                    Send email
+                    <Send className="icon-nudge h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </motion.form>

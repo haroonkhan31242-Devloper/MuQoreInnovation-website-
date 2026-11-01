@@ -32,6 +32,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.remove('dark');
       root.style.colorScheme = 'light';
     }
+    // Mobile browser bars follow the site's theme, not the system one
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+      m.setAttribute('content', theme === 'dark' ? '#000000' : '#ffffff');
+    });
 
     try {
       localStorage.setItem('muqore-theme', theme);

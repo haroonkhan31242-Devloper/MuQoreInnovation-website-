@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { AlertCircle, CheckCircle2, Loader2, Mail, Phone, Send, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, Send, ShieldCheck } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
 import { FormField, isValidEmail } from '../components/ui/FormField';
+import { EmailDraftReady } from '../components/ui/EmailDraftReady';
 import { usePageMeta } from '../components/ui/usePageMeta';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../config/contact';
-import { EmailSendError, SUCCESS_MESSAGE, isValidPhone, sendSubmission } from '../services/emailService';
+import { EmailDraft, composeDraft, isValidPhone, openEmailDraft } from '../services/mailtoService';
 
-const EMPTY = { name: '', email: '', phone: '', subject: 'General Inquiry', message: '', website: '' };
+const EMPTY = { name: '', email: '', phone: '', subject: 'General Inquiry', message: '' };
 type Errors = Partial<Record<'name' | 'email' | 'phone' | 'message', string>>;
 
 const TOPICS = [
@@ -27,8 +28,8 @@ export const ContactPage: React.FC = () => {
   usePageMeta('Contact', `Contact MuQore Innovation by email at ${CONTACT.email} or phone.`);
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  // The draft opened in the visitor's email app; null while editing the form
+  const [draft, setDraft] = useState<EmailDraft | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -47,9 +48,8 @@ export const ContactPage: React.FC = () => {
     return er;
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status === 'submitting') return;
     const er = validate();
     setErrors(er);
     if (Object.keys(er).length) {
@@ -57,24 +57,21 @@ export const ContactPage: React.FC = () => {
       requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
       return;
     }
-    setStatus('submitting');
-    try {
-      await sendSubmission({
-        formType: 'Contact form',
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        subject: form.subject,
-        message: form.message,
-        website: form.website,
-      });
-      // Clear only once EmailJS has confirmed delivery
-      setForm(EMPTY);
-      setStatus('success');
-    } catch (err) {
-      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't send your message right now.");
-      setStatus('error');
-    }
+    const topic = TOPICS.find(([v]) => v === form.subject)?.[1] ?? form.subject;
+    const next = composeDraft({
+      formType: 'Contact form',
+      subject: `New Inquiry – ${topic}`,
+      fields: [
+        ['Name', form.name],
+        ['Email Address', form.email],
+        ['Phone', form.phone],
+        ['Topic', topic],
+      ],
+      messageLabel: 'Message',
+      message: form.message,
+    });
+    // The form keeps its values so nothing is lost if no email app opens
+    if (openEmailDraft(next)) setDraft(next);
   };
 
   return (
@@ -137,31 +134,15 @@ export const ContactPage: React.FC = () => {
           {/* Form */}
           <Reveal className="card p-6 sm:p-10 lg:col-span-7" delay={0.08}>
             <AnimatePresence mode="wait" initial={false}>
-              {status === 'success' ? (
-                <motion.div
-                  key="ok"
-                  role="status"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="py-10 text-center"
-                >
-                  <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
-                    <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
-                  </span>
-                  <h2 className="mt-6 text-2xl font-bold text-fg">Message sent</h2>
-                  <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
-                  <p className="mx-auto mt-2 max-w-md text-sm text-fg-subtle">
-                    For anything urgent, call us on {CONTACT.phones[0].display}.
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-secondary mt-8"
-                    onClick={() => setStatus('idle')}
-                  >
-                    Send another message
-                  </button>
-                </motion.div>
+              {draft ? (
+                <EmailDraftReady
+                  draft={draft}
+                  onEdit={() => setDraft(null)}
+                  onReset={() => {
+                    setForm(EMPTY);
+                    setDraft(null);
+                  }}
+                />
               ) : (
                 <motion.form
                   key="form"
@@ -178,26 +159,6 @@ export const ContactPage: React.FC = () => {
                     <p className="mt-2 text-fg-muted">Fields marked * are required.</p>
                   </div>
 
-                  {status === 'error' && (
-                    <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
-                      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                      <p>
-                        {errorMessage} Your details are still in the form. You can also email us directly at{' '}
-                        <a href={mailtoHref('Inquiry from website')} className="font-semibold underline">
-                          {CONTACT.email}
-                        </a>
-                        .
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Spam trap: hidden from people, often filled in by bots */}
-                  <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                    <label>
-                      Website
-                      <input tabIndex={-1} autoComplete="off" name="website" value={form.website} onChange={update} />
-                    </label>
-                  </div>
                   <div className="grid gap-6 sm:grid-cols-2">
                     <FormField label="Full name" required error={errors.name}>
                       {(p) => <input {...p} name="name" autoComplete="name" className="field" value={form.name} onChange={update} />}
@@ -231,19 +192,15 @@ export const ContactPage: React.FC = () => {
                     )}
                   </FormField>
 
-                  <button type="submit" disabled={status === 'submitting'} className="btn btn-primary btn-lg w-full">
-                    {status === 'submitting' ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                        Sending…
-                      </>
-                    ) : (
-                      <>
-                        Send message
-                        <Send className="icon-nudge h-4 w-4" aria-hidden="true" />
-                      </>
-                    )}
-                  </button>
+                  <div>
+                    <button type="submit" className="btn btn-primary btn-lg w-full">
+                      Send email
+                      <Send className="icon-nudge h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <p className="mt-3 text-center text-sm text-fg-subtle">
+                      Opens your email app with this message filled in. You just press Send.
+                    </p>
+                  </div>
                 </motion.form>
               )}
             </AnimatePresence>

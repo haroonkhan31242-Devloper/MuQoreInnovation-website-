@@ -101,7 +101,10 @@
 /* ------------------------------------------------------------------ */
 /* Base                                                                */
 /* ------------------------------------------------------------------ */
+/* The canvas past the end of the page (overscroll, rubber-band) takes the
+   footer's color, so no band of a different color shows under the footer */
 html {
+  background: var(--bg-elevated);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }

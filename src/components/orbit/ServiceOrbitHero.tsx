@@ -106,9 +106,12 @@ const OrbitTrack: React.FC<{ intro: React.ReactNode; isDark: boolean; lowPower: 
 
   // Overlays are driven straight from scroll progress (no React re-render per frame)
   const introOpacity = useTransform(scrollYProgress, [0, 0.07], [1, 0]);
-  const canvasOpacity = useTransform(scrollYProgress, [0, 0.08, 0.93, 1], [wide ? 1 : 0.22, 1, 1, 0]);
+  // The stage scrolls away as a full screen once the track ends, so the last
+  // frame keeps the outro line and a dimmed orbit: fading both out left an
+  // empty screen-height panel between the hero and the next section.
+  const canvasOpacity = useTransform(scrollYProgress, [0, 0.08, 0.93, 1], [wide ? 1 : 0.22, 1, 1, 0.45]);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.03], [1, 0]);
-  const outroOpacity = useTransform(scrollYProgress, [0.9, 0.94, 0.98, 1], [0, 1, 1, 0]);
+  const outroOpacity = useTransform(scrollYProgress, [0.9, 0.94], [0, 1]);
   const outroY = useTransform(scrollYProgress, [0.9, 1], [24, -24]);
 
   const scrollToProgress = (p: number) => {

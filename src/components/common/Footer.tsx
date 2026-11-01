@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
     <footer className="relative mt-auto border-t border-line bg-bg-elevated">
       <ProjectCta />
 
-      <div className="container-x py-16">
+      <div className="container-x pb-10 pt-16 sm:pb-12">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Link to="/" className="inline-flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
