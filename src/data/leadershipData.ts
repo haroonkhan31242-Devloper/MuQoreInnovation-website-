@@ -16,7 +16,7 @@ export interface LeaderProfile {
  */
 export const leadershipData: LeaderProfile[] = [
   {
-    id: 'muhammad-owen-qureshi',
+    id: 'muhammad-uwaim-qureshi',
     name: 'Engineer Muhammad Uwaim Qureshi',
     designation: 'Founder & CEO, MuQore Innovation',
     company: 'MuQore Innovation',

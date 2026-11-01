@@ -47,7 +47,7 @@ export const ProjectCta: React.FC = () => {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '0px 0px -12% 0px' }}
-        className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-[#060b1a] text-white shadow-[0_40px_80px_-40px_rgba(8,145,178,0.45)]"
+        className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(135deg,#13213c_0%,#000000_100%)] text-white shadow-[0_40px_80px_-40px_rgba(19,33,60,0.6)]"
       >
         {/* Code photo, dimmed and faded to the left so text stays readable */}
         <img
@@ -62,24 +62,24 @@ export const ProjectCta: React.FC = () => {
           height={800}
           className="absolute inset-y-0 right-0 -z-10 h-full w-full object-cover opacity-30 [mask-image:linear-gradient(to_left,#000_20%,transparent_85%)] lg:w-3/4"
         />
-        <div className="aurora-a pointer-events-none absolute -left-24 -top-32 -z-10 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" aria-hidden="true" />
-        <div className="aurora-b pointer-events-none absolute -bottom-40 right-1/4 -z-10 h-96 w-96 rounded-full bg-blue-600/25 blur-3xl" aria-hidden="true" />
+        <div className="aurora-a pointer-events-none absolute -left-24 -top-32 -z-10 h-96 w-96 rounded-full bg-brand-orange/15 blur-3xl" aria-hidden="true" />
+        <div className="aurora-b pointer-events-none absolute -bottom-40 right-1/4 -z-10 h-96 w-96 rounded-full bg-brand-navy/60 blur-3xl" aria-hidden="true" />
 
         <div className="grid gap-10 px-6 py-12 sm:px-12 sm:py-14 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-7">
-            <motion.p variants={item} className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">
+            <motion.p variants={item} className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">
               Start your project
             </motion.p>
             <motion.h2 variants={item} id="project-cta-title" className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-[2.75rem] sm:leading-[1.1]">
               Have a project in mind?
             </motion.h2>
-            <motion.p variants={item} className="mt-4 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
+            <motion.p variants={item} className="mt-4 max-w-xl text-base leading-relaxed text-brand-gray sm:text-lg">
               Tell us what you want to build. We'll reply with clear next steps, a plan and an estimate.
             </motion.p>
             <motion.ol variants={item} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-6">
               {STEPS.map((s, i) => (
-                <li key={s} className="flex items-center gap-2.5 text-sm font-medium text-slate-200">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-300/10 text-xs font-bold text-cyan-200">
+                <li key={s} className="flex items-center gap-2.5 text-sm font-medium text-brand-gray">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-brand-orange/40 bg-brand-orange/10 text-xs font-bold text-brand-orange">
                     {i + 1}
                   </span>
                   {s}
@@ -115,22 +115,22 @@ export const ProjectCta: React.FC = () => {
 
             <div className="mt-5 space-y-2 border-t border-white/10 pt-5 text-sm">
               <div className="flex items-center justify-between gap-3">
-                <span className="min-w-0 text-slate-300">
+                <span className="min-w-0 text-brand-gray">
                   {emailParts()[0]}
                   <wbr />@{emailParts()[1]}
                 </span>
                 <button
                   type="button"
                   onClick={copyEmail}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-cyan-200 transition-colors hover:bg-white/10"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-orange transition-colors hover:bg-white/10"
                   aria-live="polite"
                 >
                   {copied ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
                   {copied ? 'Copied' : 'Copy email'}
                 </button>
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-slate-300">
-                <Phone className="h-4 w-4 text-cyan-300" aria-hidden="true" />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-brand-gray">
+                <Phone className="h-4 w-4 text-brand-orange" aria-hidden="true" />
                 {CONTACT.phones.map((p) => (
                   <a key={p.e164} href={telHref(p)} className="tabular-nums transition-colors hover:text-white">
                     {p.display}

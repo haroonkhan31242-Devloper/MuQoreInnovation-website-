@@ -160,7 +160,7 @@ export const HomePage: React.FC = () => {
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="text-lg font-semibold text-fg">{svc.title}</h3>
                       <ArrowUpRight
-                        className="mt-1 h-5 w-5 shrink-0 text-fg-subtle transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent"
+                        className="mt-1 h-5 w-5 shrink-0 text-fg-subtle transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-ink"
                         aria-hidden="true"
                       />
                     </div>
@@ -243,7 +243,7 @@ export const HomePage: React.FC = () => {
                       {item.categoryLabel}
                     </span>
                     {item.isDemonstration && (
-                      <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-slate-900">Demo</span>
+                      <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-brand-navy">Demo</span>
                     )}
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export const HomePage: React.FC = () => {
         <RevealGroup as="ul" className="container-x grid gap-4 py-12 sm:grid-cols-3">
           {['Clear scope before code', 'You own the source code', 'Support after launch'].map((t) => (
             <motion.li key={t} variants={revealItem} className="flex items-center justify-center gap-3 text-[0.9375rem] font-medium text-fg-muted sm:justify-start">
-              <Check className="h-5 w-5 text-accent" aria-hidden="true" />
+              <Check className="h-5 w-5 text-accent-ink" aria-hidden="true" />
               {t}
             </motion.li>
           ))}

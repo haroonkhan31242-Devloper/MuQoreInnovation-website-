@@ -38,7 +38,7 @@ export const LeadershipSection: React.FC<LeadershipSectionProps> = ({ className 
             </div>
             <div className="p-6 sm:p-7">
               <h3 className="text-xl font-semibold text-fg sm:text-2xl">{leader.name}</h3>
-              <p className="mt-1 text-sm font-semibold text-accent">{leader.designation}</p>
+              <p className="mt-1 text-sm font-semibold text-accent-ink">{leader.designation}</p>
               {leader.summaryNote && (
                 <p className="mt-4 text-[0.9375rem] leading-relaxed text-fg-muted">{leader.summaryNote}</p>
               )}

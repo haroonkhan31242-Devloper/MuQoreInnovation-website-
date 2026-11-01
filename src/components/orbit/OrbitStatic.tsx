@@ -38,7 +38,7 @@ export const OrbitStatic: React.FC = () => (
     {/* Ring layout (sm and up) */}
     <div className="relative hidden aspect-square sm:block">
       <div
-        className="pointer-events-none absolute inset-[18%] rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.25),transparent)] blur-2xl"
+        className="pointer-events-none absolute inset-[18%] rounded-full bg-[radial-gradient(closest-side,rgba(252,163,17,0.22),transparent)] blur-2xl"
         aria-hidden="true"
       />
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" aria-hidden="true">
@@ -78,7 +78,7 @@ export const OrbitStatic: React.FC = () => (
                 <span className="icon-tile h-9 w-9 rounded-xl">
                   <ServiceIcon name={s.iconName} className="h-[18px] w-[18px]" />
                 </span>
-                <span className="text-[0.75rem] font-semibold leading-tight text-fg group-hover:text-accent">{s.name}</span>
+                <span className="text-[0.75rem] font-semibold leading-tight text-fg group-hover:text-accent-ink">{s.name}</span>
               </Link>
             </li>
           );
@@ -98,7 +98,7 @@ export const OrbitStatic: React.FC = () => (
               to={`/services/${s.slug}`}
               className="flex h-full min-h-[3.25rem] items-center gap-2.5 rounded-xl border border-line bg-surface p-2.5 text-[0.8125rem] font-semibold leading-tight text-fg"
             >
-              <ServiceIcon name={s.iconName} className="h-4 w-4 shrink-0 text-accent" />
+              <ServiceIcon name={s.iconName} className="h-4 w-4 shrink-0 text-accent-ink" />
               {s.name}
             </Link>
           </li>

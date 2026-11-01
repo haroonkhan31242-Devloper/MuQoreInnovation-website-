@@ -6,9 +6,10 @@ import { Reveal } from '../components/ui/Reveal';
 import { FormField, isValidEmail } from '../components/ui/FormField';
 import { usePageMeta } from '../components/ui/usePageMeta';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../config/contact';
+import { EmailSendError, SUCCESS_MESSAGE, isValidPhone, sendSubmission } from '../services/emailService';
 
 const EMPTY = { name: '', email: '', phone: '', subject: 'General Inquiry', message: '', website: '' };
-type Errors = Partial<Record<'name' | 'email' | 'message', string>>;
+type Errors = Partial<Record<'name' | 'email' | 'phone' | 'message', string>>;
 
 const TOPICS = [
   ['General Inquiry', 'General inquiry'],
@@ -27,6 +28,7 @@ export const ContactPage: React.FC = () => {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
 
   const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -40,12 +42,14 @@ export const ContactPage: React.FC = () => {
     if (!form.name.trim()) er.name = 'Please enter your name.';
     if (!form.email.trim()) er.email = 'Please enter your email address.';
     else if (!isValidEmail(form.email)) er.email = 'Please enter a valid email, like name@company.com.';
+    if (!isValidPhone(form.phone)) er.phone = 'Please enter a valid phone number, like +92 333 1166607.';
     if (form.message.trim().length < 10) er.message = 'Please tell us a little more (at least 10 characters).';
     return er;
   };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'submitting') return;
     const er = validate();
     setErrors(er);
     if (Object.keys(er).length) {
@@ -55,15 +59,20 @@ export const ContactPage: React.FC = () => {
     }
     setStatus('submitting');
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      await sendSubmission({
+        formType: 'Contact form',
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        subject: form.subject,
+        message: form.message,
+        website: form.website,
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) throw new Error(data.message || 'Request failed');
+      // Clear only once EmailJS has confirmed delivery
+      setForm(EMPTY);
       setStatus('success');
-    } catch {
+    } catch (err) {
+      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't send your message right now.");
       setStatus('error');
     }
   };
@@ -91,7 +100,7 @@ export const ContactPage: React.FC = () => {
               </span>
               <span className="min-w-0">
                 <span className="block text-sm font-semibold text-fg-subtle">Email</span>
-                <span className="mt-1 block text-base font-semibold text-fg group-hover:text-accent sm:text-lg">
+                <span className="mt-1 block text-base font-semibold text-fg group-hover:text-accent-ink sm:text-lg">
                   {emailParts()[0]}
                   <wbr />@{emailParts()[1]}
                 </span>
@@ -108,7 +117,7 @@ export const ContactPage: React.FC = () => {
                   <ul className="mt-1 space-y-1">
                     {CONTACT.phones.map((p) => (
                       <li key={p.e164}>
-                        <a href={telHref(p)} className="text-lg font-semibold tabular-nums text-fg transition-colors hover:text-accent">
+                        <a href={telHref(p)} className="text-lg font-semibold tabular-nums text-fg transition-colors hover:text-accent-ink">
                           {p.display}
                         </a>
                       </li>
@@ -120,7 +129,7 @@ export const ContactPage: React.FC = () => {
 
 
             <div className="flex gap-3 rounded-2xl border border-line bg-surface-2/60 p-5 text-sm leading-relaxed text-fg-muted">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" aria-hidden="true" />
               <p>Your message stays confidential. We're happy to sign an NDA before discussing project details.</p>
             </div>
           </Reveal>
@@ -140,18 +149,15 @@ export const ContactPage: React.FC = () => {
                   <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
                     <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
                   </span>
-                  <h2 className="mt-6 text-2xl font-bold text-fg">Message received</h2>
-                  <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">
-                    Thank you, {form.name.split(' ')[0]}. We'll get back to you at {form.email}. For anything urgent,
-                    call us on {CONTACT.phones[0].display}.
+                  <h2 className="mt-6 text-2xl font-bold text-fg">Message sent</h2>
+                  <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
+                  <p className="mx-auto mt-2 max-w-md text-sm text-fg-subtle">
+                    For anything urgent, call us on {CONTACT.phones[0].display}.
                   </p>
                   <button
                     type="button"
                     className="btn btn-secondary mt-8"
-                    onClick={() => {
-                      setForm(EMPTY);
-                      setStatus('idle');
-                    }}
+                    onClick={() => setStatus('idle')}
                   >
                     Send another message
                   </button>
@@ -176,7 +182,7 @@ export const ContactPage: React.FC = () => {
                     <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
                       <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                       <p>
-                        We couldn't send your message right now. Please try again, or email us directly at{' '}
+                        {errorMessage} Your details are still in the form. You can also email us directly at{' '}
                         <a href={mailtoHref('Inquiry from website')} className="font-semibold underline">
                           {CONTACT.email}
                         </a>
@@ -201,7 +207,7 @@ export const ContactPage: React.FC = () => {
                         <input {...p} type="email" name="email" autoComplete="email" inputMode="email" className="field" value={form.email} onChange={update} />
                       )}
                     </FormField>
-                    <FormField label="Phone">
+                    <FormField label="Phone" error={errors.phone}>
                       {(p) => (
                         <input {...p} type="tel" name="phone" autoComplete="tel" inputMode="tel" className="field" value={form.phone} onChange={update} />
                       )}

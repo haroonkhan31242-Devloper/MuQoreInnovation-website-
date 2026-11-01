@@ -36,12 +36,12 @@ export const Accordion: React.FC<AccordionProps> = ({ items, defaultOpen = null 
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="group flex w-full items-center justify-between gap-6 px-5 py-5 text-left sm:px-7 sm:py-6"
               >
-                <span className="text-base font-semibold text-fg transition-colors group-hover:text-accent sm:text-lg">
+                <span className="text-base font-semibold text-fg transition-colors group-hover:text-accent-ink sm:text-lg">
                   {item.question}
                 </span>
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
-                    isOpen ? 'rotate-45 border-accent bg-accent-soft text-accent' : 'border-line text-fg-subtle'
+                    isOpen ? 'rotate-45 border-accent bg-accent-soft text-accent-ink' : 'border-line text-fg-subtle'
                   }`}
                   aria-hidden="true"
                 >

@@ -43,7 +43,7 @@ export const AnimatedLogoCard: React.FC<AnimatedLogoCardProps> = ({
       onPointerLeave={onLeave}
     >
       <div
-        className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(34,211,238,0.22),transparent)] blur-2xl"
+        className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(252,163,17,0.2),transparent)] blur-2xl"
         aria-hidden="true"
       />
       <div

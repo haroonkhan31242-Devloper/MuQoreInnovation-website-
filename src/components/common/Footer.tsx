@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
             <Link to="/" className="inline-flex items-center gap-3 rounded-xl" aria-label="MuQore Innovation, home">
               <BrandMark size={44} />
               <span className="font-display text-2xl font-bold tracking-tight text-fg">
-                MuQore<span className="text-accent">.</span>
+                MuQore<span className="text-accent-ink">.</span>
               </span>
             </Link>
             <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-fg-subtle">Ideas • Code • Solutions</p>
@@ -50,7 +50,7 @@ export const Footer: React.FC = () => {
             <ul className="mt-5 space-y-4 text-[0.9375rem]">
               <li>
                 <a href={mailtoHref()} className="group flex items-start gap-3 text-fg-muted transition-colors hover:text-fg">
-                  <Mail className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent" aria-hidden="true" />
+                  <Mail className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent-ink" aria-hidden="true" />
                   <span>
                     {emailParts()[0]}
                     <wbr />@{emailParts()[1]}
@@ -60,7 +60,7 @@ export const Footer: React.FC = () => {
               {CONTACT.phones.map((p) => (
                 <li key={p.e164}>
                   <a href={telHref(p)} className="flex items-start gap-3 text-fg-muted transition-colors hover:text-fg">
-                    <Phone className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent" aria-hidden="true" />
+                    <Phone className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent-ink" aria-hidden="true" />
                     <span className="tabular-nums">{p.display}</span>
                   </a>
                 </li>

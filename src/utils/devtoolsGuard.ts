@@ -51,7 +51,7 @@ export function installDevtoolsGuard() {
       warned = true;
       console.log(
         '%cMuQore Innovation%c\nThis console is intended for developers. Please do not paste code here that someone sent you.',
-        'font-size:18px;font-weight:700;color:#22d3ee',
+        'font-size:18px;font-weight:700;color:#fca311',
         'font-size:13px',
       );
     }

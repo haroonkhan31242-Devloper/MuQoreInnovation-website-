@@ -19,9 +19,10 @@ const STEP = (Math.PI * 2) / SERVICE_COUNT;
 const UP = new THREE.Vector3(0, 1, 0);
 
 // Brand palette
-const CYAN = new THREE.Color('#22d3ee');
-const BLUE = new THREE.Color('#2563eb');
-const TEAL_DEEP = new THREE.Color('#0e7490');
+// Brand palette: orange accents, navy structure, orange-on-white tint for pulses
+const ORANGE = new THREE.Color('#fca311');
+const ORANGE_LIGHT = new THREE.Color('#fdc870');
+const NAVY = new THREE.Color('#13213c');
 
 interface Layout {
   wide: boolean;
@@ -219,12 +220,12 @@ export class OrbitScene {
   // ------------------------------------------------------------------ build
 
   private buildLights() {
-    this.ambient = new THREE.HemisphereLight(0xbfe9ff, 0x0b1630, 0.9);
+    this.ambient = new THREE.HemisphereLight(0xffffff, 0x13213c, 0.9);
     this.key = new THREE.DirectionalLight(0xffffff, 2.2);
     this.key.position.set(4, 6, 8);
-    const rim = new THREE.DirectionalLight(0x2563eb, 2.4);
+    const rim = new THREE.DirectionalLight(0xfca311, 1.6);
     rim.position.set(-6, -2, -5);
-    const fill = new THREE.PointLight(0x22d3ee, 18, 12, 2);
+    const fill = new THREE.PointLight(0xfca311, 10, 12, 2);
     fill.position.set(0, 0, 2.5);
     this.scene.add(this.ambient, this.key, rim, fill);
   }
@@ -243,7 +244,7 @@ export class OrbitScene {
     });
     geo.translate(0, 0, -depth / 2);
     this.plaqueMat = new THREE.MeshPhysicalMaterial({
-      color: '#060c1c',
+      color: '#0b1323',
       metalness: 0.65,
       roughness: 0.28,
       clearcoat: 1,
@@ -288,14 +289,14 @@ export class OrbitScene {
     // Thin luminous outline around the plaque
     const edgePts = shape.getPoints(24).map((p) => new THREE.Vector3(p.x * 1.035, p.y * 1.035, 0));
     const edgeGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
-    this.plaqueEdgeMat = new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: 0.5 });
+    this.plaqueEdgeMat = new THREE.LineBasicMaterial({ color: ORANGE, transparent: true, opacity: 0.5 });
     const edge = new THREE.LineLoop(edgeGeo, this.plaqueEdgeMat);
     edge.position.z = depth / 2 + 0.055;
 
     // Soft halo behind the plaque
     const glowTex = radialTexture([
-      [0, 'rgba(34,211,238,0.55)'],
-      [0.35, 'rgba(37,99,235,0.22)'],
+      [0, 'rgba(252,163,17,0.45)'],
+      [0.35, 'rgba(19,33,60,0.3)'],
       [1, 'rgba(0,0,0,0)'],
     ]);
     this.glowMat = new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
@@ -322,7 +323,7 @@ export class OrbitScene {
       pathPts.push(new THREE.Vector3(Math.sin(a) * radius, 0, Math.cos(a) * radius));
     }
     const pathGeo = new THREE.BufferGeometry().setFromPoints(pathPts);
-    this.orbitLineMat = new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: 0.3 });
+    this.orbitLineMat = new THREE.LineBasicMaterial({ color: ORANGE, transparent: true, opacity: 0.3 });
     this.ringTilt.add(new THREE.Line(pathGeo, this.orbitLineMat));
 
     const dotCount = 90;
@@ -339,7 +340,7 @@ export class OrbitScene {
       [0.4, 'rgba(255,255,255,0.5)'],
       [1, 'rgba(255,255,255,0)'],
     ]);
-    this.dotsMat = new THREE.PointsMaterial({ map: dotTex, size: 0.07, transparent: true, depthWrite: false, opacity: 0.5, color: CYAN });
+    this.dotsMat = new THREE.PointsMaterial({ map: dotTex, size: 0.07, transparent: true, depthWrite: false, opacity: 0.5, color: ORANGE });
     this.dotsRing = new THREE.Points(dotGeo, this.dotsMat);
     this.ringTilt.add(this.dotsRing);
 
@@ -356,7 +357,7 @@ export class OrbitScene {
     });
     cardGeo.translate(0, 0, -depth / 2);
     this.cardMat = new THREE.MeshPhysicalMaterial({
-      color: '#0b1426',
+      color: '#13213c',
       metalness: 0.45,
       roughness: 0.22,
       clearcoat: 1,
@@ -382,7 +383,7 @@ export class OrbitScene {
       const iconMat = new THREE.MeshBasicMaterial({ transparent: true, toneMapped: false, opacity: 0 });
       const icon = new THREE.Mesh(iconGeo, iconMat);
       icon.position.z = depth / 2 + 0.035;
-      const edgeMat = new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: 0.25 });
+      const edgeMat = new THREE.LineBasicMaterial({ color: ORANGE, transparent: true, opacity: 0.25 });
       const edge = new THREE.LineLoop(edgeGeo, edgeMat);
       edge.position.z = depth / 2 + 0.036;
 
@@ -412,7 +413,7 @@ export class OrbitScene {
     // Data pulses travelling inward along the focused beam
     const pulseGeo = new THREE.BufferGeometry();
     pulseGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(5 * 3), 3));
-    this.pulseMat = new THREE.PointsMaterial({ map: dotTex, size: 0.16, transparent: true, depthWrite: false, color: CYAN, opacity: 0 });
+    this.pulseMat = new THREE.PointsMaterial({ map: dotTex, size: 0.16, transparent: true, depthWrite: false, color: ORANGE, opacity: 0 });
     this.pulses = new THREE.Points(pulseGeo, this.pulseMat);
     this.ring.add(this.pulses);
     this.disposables.push(beamGeo, this.beamMat, pulseGeo, this.pulseMat);
@@ -438,7 +439,7 @@ export class OrbitScene {
       [0.3, 'rgba(255,255,255,0.35)'],
       [1, 'rgba(255,255,255,0)'],
     ]);
-    this.particleMat = new THREE.PointsMaterial({ map: tex, size: 0.06, transparent: true, depthWrite: false, color: CYAN });
+    this.particleMat = new THREE.PointsMaterial({ map: tex, size: 0.06, transparent: true, depthWrite: false, color: ORANGE });
     this.particles = new THREE.Points(geo, this.particleMat);
     this.scene.add(this.particles);
     this.disposables.push(geo, tex, this.particleMat);
@@ -518,19 +519,19 @@ export class OrbitScene {
 
   private applyTheme() {
     const d = this.isDark;
-    const accent = d ? CYAN : TEAL_DEEP;
+    const accent = ORANGE;
     const blend = d ? THREE.AdditiveBlending : THREE.NormalBlending;
     this.ambient.intensity = d ? 0.9 : 1.6;
-    this.ambient.groundColor.set(d ? 0x0b1630 : 0xdbe7f5);
+    this.ambient.groundColor.set(d ? 0x13213c : 0xe5e5e5);
     this.key.intensity = d ? 2.2 : 2.6;
-    this.plaqueMat.color.set(d ? '#060c1c' : '#f4f8fc');
+    this.plaqueMat.color.set(d ? '#0b1323' : '#f7f7f7');
     this.plaqueMat.metalness = d ? 0.65 : 0.25;
-    this.cardMat.color.set(d ? '#0b1426' : '#ffffff');
+    this.cardMat.color.set(d ? '#13213c' : '#ffffff');
     this.cardMat.metalness = d ? 0.45 : 0.1;
     this.cardMat.roughness = d ? 0.22 : 0.3;
-    this.iconMats.forEach((m) => m.color.copy(d ? CYAN : TEAL_DEEP));
+    this.iconMats.forEach((m) => m.color.copy(d ? ORANGE : NAVY));
     this.cardEdges.forEach((m) => m.color.copy(accent));
-    this.plaqueEdgeMat.color.copy(d ? CYAN : BLUE);
+    this.plaqueEdgeMat.color.copy(ORANGE);
     this.orbitLineMat.color.copy(accent);
     this.orbitLineMat.opacity = d ? 0.3 : 0.35;
     for (const m of [this.dotsMat, this.particleMat, this.pulseMat, this.beamMat, this.glowMat] as THREE.Material[]) {
@@ -538,9 +539,9 @@ export class OrbitScene {
       m.needsUpdate = true;
     }
     this.dotsMat.color.copy(accent);
-    this.particleMat.color.copy(d ? CYAN : BLUE);
+    this.particleMat.color.copy(d ? ORANGE : NAVY);
     this.particleMat.opacity = d ? 0.7 : 0.35;
-    this.pulseMat.color.copy(d ? new THREE.Color('#a5f3fc') : BLUE);
+    this.pulseMat.color.copy(d ? ORANGE_LIGHT : ORANGE);
     this.glowMat.opacity = d ? 0.9 : 0.35;
     this.sheenMat.opacity = d ? 1 : 0;
     this.requestFrame();
@@ -761,7 +762,7 @@ export class OrbitScene {
       this.beamLevel[i] = damp(this.beamLevel[i], lvl, 5, dt);
       const baseA = (this.isDark ? 0.12 : 0.18) * appear * visible;
       const a = baseA + this.beamLevel[i] * 0.75 * visible;
-      const c = this.isDark ? CYAN : BLUE;
+      const c = this.isDark ? ORANGE : NAVY;
       this.beamColors.setXYZW(i * 2, c.r, c.g, c.b, a * 0.15);
       this.beamColors.setXYZW(i * 2 + 1, c.r, c.g, c.b, a);
     }

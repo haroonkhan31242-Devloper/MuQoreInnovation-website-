@@ -66,13 +66,13 @@ export const PortfolioPage: React.FC = () => {
                     aria-selected={selected}
                     onClick={() => setFilter(c.id)}
                     className={`relative min-h-10 shrink-0 rounded-full px-4 text-sm font-semibold transition-colors ${
-                      selected ? 'text-[#04131a]' : 'text-fg-muted hover:text-fg'
+                      selected ? 'text-on-accent' : 'text-fg-muted hover:text-fg'
                     }`}
                   >
                     {selected && (
                       <motion.span
                         layoutId="portfolio-filter"
-                        className="absolute inset-0 rounded-full bg-[linear-gradient(180deg,#4fe0f5,#22d3ee)]"
+                        className="absolute inset-0 rounded-full bg-accent"
                         transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                         aria-hidden="true"
                       />
@@ -104,7 +104,7 @@ export const PortfolioPage: React.FC = () => {
                           {p.categoryLabel}
                         </span>
                         {p.isDemonstration && (
-                          <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-slate-900">Demo</span>
+                          <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-brand-navy">Demo</span>
                         )}
                       </div>
                       <p className="absolute bottom-5 left-5 right-5 text-sm text-white/85">Client: {p.client}</p>
@@ -177,7 +177,7 @@ export const PortfolioPage: React.FC = () => {
                 <ul className="mt-4 space-y-3">
                   {active.features.map((f) => (
                     <li key={f} className="flex gap-3 text-[0.9375rem] leading-relaxed text-fg-muted">
-                      <Check className="mt-1 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                      <Check className="mt-1 h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
                       <span>{f}</span>
                     </li>
                   ))}

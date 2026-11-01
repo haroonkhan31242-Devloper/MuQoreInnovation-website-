@@ -9,6 +9,7 @@ import { ServiceIcon } from '../components/ui/ServiceIcon';
 import { FormField, isValidEmail } from '../components/ui/FormField';
 import { usePageMeta } from '../components/ui/usePageMeta';
 import { CONTACT, mailtoHref } from '../config/contact';
+import { EmailSendError, SUCCESS_MESSAGE, sendSubmission } from '../services/emailService';
 
 const BUDGETS = ['$5k - $15k', '$15k - $35k', '$35k - $75k', '$75k+ Enterprise'];
 const TIMELINES = ['< 4 Weeks', '1 - 3 Months', '3 - 6 Months', 'Flexible Roadmap'];
@@ -48,6 +49,9 @@ export const GetAQuotePage: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [referenceId, setReferenceId] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  // What was sent, shown on the success screen after the form is cleared
+  const [summary, setSummary] = useState<[string, string][]>([]);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -66,6 +70,7 @@ export const GetAQuotePage: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'submitting') return;
     const er: Errors = {};
     if (!form.name.trim()) er.name = 'Please enter your name.';
     if (!form.email.trim()) er.email = 'Please enter your email address.';
@@ -79,23 +84,37 @@ export const GetAQuotePage: React.FC = () => {
 
     setStatus('submitting');
     const generatedRef = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    const serviceTitle = servicesData.find((s) => s.slug === form.serviceSlug)?.title ?? form.serviceSlug;
     try {
-      const res = await fetch('/api/quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, referenceId: generatedRef }),
+      await sendSubmission({
+        formType: 'Quote request',
+        name: form.name,
+        email: form.email,
+        company: form.company,
+        subject: `Quote request ${generatedRef}: ${serviceTitle}`,
+        service: serviceTitle,
+        budget: form.budgetRange,
+        timeline: form.timeline,
+        features: form.featuresNeeded,
+        projectDescription: form.projectDescription,
+        referenceId: generatedRef,
+        website: form.website,
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) throw new Error(data.message || 'Request failed');
-      setReferenceId(data.referenceId || generatedRef);
+      setSummary([
+        ['Service', serviceTitle],
+        ['Budget', form.budgetRange],
+        ['Timeline', form.timeline],
+      ]);
+      setReferenceId(generatedRef);
+      // Clear only once EmailJS has confirmed delivery
+      setForm(initialForm(form.serviceSlug));
       setStatus('success');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch {
+    } catch (err) {
+      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't submit your request.");
       setStatus('error');
     }
   };
-
-  const selectedService = servicesData.find((s) => s.slug === form.serviceSlug);
 
   return (
     <>
@@ -124,18 +143,15 @@ export const GetAQuotePage: React.FC = () => {
                 <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
                   <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
                 </span>
-                <h2 className="mt-6 text-3xl font-bold text-fg">Thank you, {form.name.split(' ')[0]}</h2>
+                <h2 className="mt-6 text-3xl font-bold text-fg">Request sent</h2>
+                <p className="mx-auto mt-3 max-w-lg leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
                 <p className="mx-auto mt-3 max-w-lg leading-relaxed text-fg-muted">
-                  Your request has been received. Your reference is{' '}
-                  <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent">{referenceId}</strong>.
+                  Your reference is{' '}
+                  <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent-ink">{referenceId}</strong>.
                   Please mention it if you contact us at {CONTACT.email}.
                 </p>
                 <dl className="mx-auto mt-8 max-w-md divide-y divide-line rounded-2xl border border-line text-left text-sm">
-                  {[
-                    ['Service', selectedService?.title ?? form.serviceSlug],
-                    ['Budget', form.budgetRange],
-                    ['Timeline', form.timeline],
-                  ].map(([k, v]) => (
+                  {summary.map(([k, v]) => (
                     <div key={k} className="flex justify-between gap-4 px-5 py-3">
                       <dt className="text-fg-subtle">{k}</dt>
                       <dd className="font-semibold text-fg">{v}</dd>
@@ -149,10 +165,7 @@ export const GetAQuotePage: React.FC = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => {
-                      setForm(initialForm('website-development'));
-                      setStatus('idle');
-                    }}
+                    onClick={() => setStatus('idle')}
                   >
                     Request another quote
                   </button>
@@ -173,7 +186,7 @@ export const GetAQuotePage: React.FC = () => {
                   <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
                     <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                     <p>
-                      We couldn't submit your request. Please try again, or email the details to{' '}
+                      {errorMessage} Your details are still in the form. You can also email them to{' '}
                       <a href={mailtoHref('Quote request')} className="font-semibold underline">
                         {CONTACT.email}
                       </a>
@@ -221,10 +234,10 @@ export const GetAQuotePage: React.FC = () => {
                           className="option-card flex flex-col gap-3 p-4 text-left"
                         >
                           <span className="flex items-center justify-between">
-                            <ServiceIcon name={svc.iconName} className={`h-5 w-5 ${on ? 'text-accent' : 'text-fg-subtle'}`} />
+                            <ServiceIcon name={svc.iconName} className={`h-5 w-5 ${on ? 'text-accent-ink' : 'text-fg-subtle'}`} />
                             <span
                               className={`flex h-5 w-5 items-center justify-center rounded-full border transition-colors ${
-                                on ? 'border-accent bg-accent text-[#04131a]' : 'border-line-strong'
+                                on ? 'border-accent bg-accent text-on-accent' : 'border-line-strong'
                               }`}
                               aria-hidden="true"
                             >
@@ -260,7 +273,7 @@ export const GetAQuotePage: React.FC = () => {
                         >
                           <span
                             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
-                              on ? 'border-accent bg-accent text-[#04131a]' : 'border-line-strong'
+                              on ? 'border-accent bg-accent text-on-accent' : 'border-line-strong'
                             }`}
                             aria-hidden="true"
                           >
@@ -294,7 +307,7 @@ export const GetAQuotePage: React.FC = () => {
 
                 <div className="flex flex-col-reverse items-stretch justify-between gap-4 pt-2 sm:flex-row sm:items-center">
                   <p className="flex items-center gap-2 text-sm text-fg-subtle">
-                    <ShieldCheck className="h-4 w-4 text-accent" aria-hidden="true" />
+                    <ShieldCheck className="h-4 w-4 text-accent-ink" aria-hidden="true" />
                     Your information is kept confidential.
                   </p>
                   <button type="submit" disabled={status === 'submitting'} className="btn btn-primary btn-lg">
@@ -324,7 +337,7 @@ const Step: React.FC<{ n: number; title: string; optional?: boolean; children: R
   <Reveal as="section" className="card p-6 sm:p-8">
     <fieldset>
       <legend className="mb-6 flex items-center gap-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-sm font-bold text-accent">{n}</span>
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-sm font-bold text-accent-ink">{n}</span>
         <span className="font-display text-lg font-semibold text-fg sm:text-xl">{title}</span>
         {optional && <span className="text-sm text-fg-subtle">(optional)</span>}
       </legend>

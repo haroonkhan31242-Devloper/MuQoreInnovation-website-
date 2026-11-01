@@ -23,7 +23,7 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/orbitcloud',
     isDemonstration: true,
-    visualColor: 'from-blue-600 to-cyan-500'
+    visualColor: 'from-brand-navy to-black'
   },
   {
     id: 'aegis-telemetry-desktop',
@@ -47,7 +47,7 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/aegis-sentinel',
     isDemonstration: true,
-    visualColor: 'from-cyan-500 to-emerald-500'
+    visualColor: 'from-brand-navy via-brand-navy to-brand-orange/55'
   },
   {
     id: 'pulse-health-mobile',
@@ -71,7 +71,7 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/pulsetrack',
     isDemonstration: true,
-    visualColor: 'from-indigo-500 to-blue-500'
+    visualColor: 'from-black via-brand-navy to-brand-navy'
   },
   {
     id: 'cortex-doc-automation',
@@ -95,7 +95,7 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/cortexflow',
     isDemonstration: true,
-    visualColor: 'from-blue-500 to-purple-600'
+    visualColor: 'from-brand-orange/80 via-brand-navy to-black'
   },
   {
     id: 'nexus-payment-gateway',
@@ -119,7 +119,7 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/nexuscore',
     isDemonstration: true,
-    visualColor: 'from-blue-600 to-indigo-700'
+    visualColor: 'from-black to-brand-navy'
   },
   {
     id: 'retail-suite-redesign',
@@ -143,6 +143,6 @@ export const portfolioData: PortfolioItem[] = [
     ],
     demoUrl: 'https://demo.muqore.com/omnitrade',
     isDemonstration: true,
-    visualColor: 'from-cyan-600 to-blue-700'
+    visualColor: 'from-brand-navy to-brand-orange/40'
   }
 ];

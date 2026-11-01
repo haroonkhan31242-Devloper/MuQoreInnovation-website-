@@ -18,7 +18,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ eyebrow, title, description,
   <header className="relative overflow-hidden border-b border-line">
     <div className="pointer-events-none absolute inset-0 bg-grid" aria-hidden="true" />
     <div
-      className="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[760px] max-w-[140vw] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.16),transparent)] blur-2xl"
+      className="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[760px] max-w-[140vw] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(252,163,17,0.14),transparent)] blur-2xl"
       aria-hidden="true"
     />
     <div className="container-x relative pb-14 pt-10 sm:pb-20 sm:pt-14">

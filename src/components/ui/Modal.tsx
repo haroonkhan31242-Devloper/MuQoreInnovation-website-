@@ -66,7 +66,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, labelledBy, childre
           exit={{ opacity: 0, transition: { duration: 0.18 } }}
           transition={{ duration: 0.25 }}
         >
-          <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
           <motion.div
             ref={panelRef}
             role="dialog"

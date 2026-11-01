@@ -6,42 +6,64 @@
 /* Design tokens                                                       */
 /* Semantic colors are CSS variables so light/dark share one class set */
 /* ------------------------------------------------------------------ */
+/*
+ * Brand palette: #000000 black, #13213C navy, #FCA311 orange, #E5E5E5 light
+ * gray, #FFFFFF white. In-between shades below are mixes of those five only.
+ *
+ * Orange is too light for text on white (about 2:1), so it is split in two:
+ *   --accent      orange fills, borders, indicators and focus (both themes)
+ *   --accent-ink  accent text and icons: navy on light, orange on dark
+ */
 :root {
-  --bg: #f7f9fc;
-  --bg-elevated: #ffffff;
+  --black: #000000;
+  --navy: #13213c;
+  --orange: #fca311;
+  --gray: #e5e5e5;
+  --white: #ffffff;
+
+  --bg: #ffffff;
+  --bg-elevated: #f7f7f7;
   --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --line: #e2e8f0;
-  --line-strong: #cbd5e1;
-  --fg: #0b1220;
-  --fg-muted: #475569;
-  --fg-subtle: #64748b;
-  --accent: #0e7490;
-  --accent-strong: #155e75;
-  --accent-soft: rgba(8, 145, 178, 0.1);
-  --ring: rgba(8, 145, 178, 0.55);
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
-  --shadow-lift: 0 2px 4px rgba(15, 23, 42, 0.04), 0 24px 48px -20px rgba(15, 23, 42, 0.22);
-  --grid-line: rgba(15, 23, 42, 0.05);
+  --surface-2: #f2f2f2;
+  --line: #e5e5e5;
+  --line-strong: #c4c7cd;
+  --field-border: #898f9e;
+  --fg: #13213c;
+  --fg-muted: #474f60;
+  --fg-subtle: #5e6575;
+  --accent: #fca311;
+  --accent-strong: #e8960f;
+  --accent-soft: rgba(252, 163, 17, 0.14);
+  --accent-ink: #13213c;
+  --accent-ink-strong: #000000;
+  --on-accent: #000000;
+  --ring: #13213c;
+  --shadow-card: 0 1px 2px rgba(19, 33, 60, 0.05), 0 8px 24px -12px rgba(19, 33, 60, 0.14);
+  --shadow-lift: 0 2px 4px rgba(19, 33, 60, 0.05), 0 24px 48px -20px rgba(19, 33, 60, 0.24);
+  --grid-line: rgba(19, 33, 60, 0.05);
 }
 
 .dark {
-  --bg: #050811;
-  --bg-elevated: #0a0f1d;
-  --surface: #0b1121;
-  --surface-2: #111a2e;
-  --line: #1a2440;
-  --line-strong: #263354;
-  --fg: #f1f5f9;
-  --fg-muted: #a3b1c6;
-  --fg-subtle: #7d8ba3;
-  --accent: #22d3ee;
-  --accent-strong: #67e8f9;
-  --accent-soft: rgba(34, 211, 238, 0.1);
-  --ring: rgba(34, 211, 238, 0.6);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
-  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.3), 0 28px 56px -24px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(34, 211, 238, 0.08);
-  --grid-line: rgba(148, 163, 184, 0.06);
+  --bg: #000000;
+  --bg-elevated: #070c16;
+  --surface: #0b1323;
+  --surface-2: #13213c;
+  --line: #1d2a44;
+  --line-strong: #323e55;
+  --field-border: #5d6677;
+  --fg: #ffffff;
+  --fg-muted: #c5c8cc;
+  --fg-subtle: #9ba0aa;
+  --accent: #fca311;
+  --accent-strong: #fdb135;
+  --accent-soft: rgba(252, 163, 17, 0.12);
+  --accent-ink: #fca311;
+  --accent-ink-strong: #fdc870;
+  --on-accent: #000000;
+  --ring: #fca311;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.4), 0 28px 56px -24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(252, 163, 17, 0.1);
+  --grid-line: rgba(229, 229, 229, 0.05);
 }
 
 @theme {
@@ -49,9 +71,10 @@
   --font-display: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-brand-cyan: #22d3ee;
-  --color-brand-blue: #2563eb;
-  --color-brand-navy: #050811;
+  --color-brand-black: #000000;
+  --color-brand-navy: #13213c;
+  --color-brand-orange: #fca311;
+  --color-brand-gray: #e5e5e5;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
@@ -70,6 +93,9 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-ink-strong: var(--accent-ink-strong);
+  --color-on-accent: var(--on-accent);
 }
 
 /* ------------------------------------------------------------------ */
@@ -81,6 +107,7 @@ html {
 }
 
 body {
+  transition: background-color 300ms var(--ease-out-expo), color 300ms var(--ease-out-expo);
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
@@ -98,7 +125,8 @@ h1, h2, h3, h4 {
 p { text-wrap: pretty; }
 
 ::selection {
-  background: rgba(34, 211, 238, 0.35);
+  background: rgba(252, 163, 17, 0.35);
+  color: inherit;
 }
 
 :focus-visible {
@@ -149,14 +177,14 @@ button:not(:disabled), [role='button'], summary, select {
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .eyebrow::before {
     content: '';
     width: 1.25rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.7;
+    height: 2px;
+    border-radius: 9999px;
+    background: var(--accent);
   }
 
   .h-display {
@@ -183,14 +211,20 @@ button:not(:disabled), [role='button'], summary, select {
   }
   @media (min-width: 640px) { .lead { font-size: 1.125rem; } }
 
+  /* Highlighted words: orange text on dark, navy text over an orange marker on light */
   .text-gradient {
-    background: linear-gradient(100deg, #22d3ee 0%, #3b82f6 55%, #818cf8 100%);
+    background: linear-gradient(100deg, #fca311 0%, #fdc870 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   :where(:root:not(.dark)) .text-gradient {
-    background-image: linear-gradient(100deg, #0891b2 0%, #2563eb 60%, #4f46e5 100%);
+    color: var(--navy);
+    background: linear-gradient(transparent 68%, rgba(252, 163, 17, 0.55) 68%, rgba(252, 163, 17, 0.55) 92%, transparent 92%);
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
   /* Buttons ------------------------------------------------------- */
@@ -224,20 +258,20 @@ button:not(:disabled), [role='button'], summary, select {
   .btn-sm { min-height: 2.25rem; padding: 0.4rem 0.875rem; font-size: 0.875rem; border-radius: 0.625rem; }
 
   .btn-primary {
-    color: #04131a;
-    background: linear-gradient(180deg, #4fe0f5 0%, #22d3ee 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(8, 145, 178, 0.3), 0 8px 20px -8px rgba(34, 211, 238, 0.55);
+    color: var(--on-accent);
+    background: var(--accent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(19, 33, 60, 0.18), 0 8px 20px -8px rgba(252, 163, 17, 0.55);
   }
   .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(180deg, #67e8f9 0%, #2dd4f0 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 2px rgba(8, 145, 178, 0.3), 0 12px 28px -8px rgba(34, 211, 238, 0.7);
+    background: var(--accent-strong);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(19, 33, 60, 0.18), 0 12px 28px -8px rgba(252, 163, 17, 0.7);
   }
 
   .btn-secondary {
     color: var(--fg);
     background: var(--surface);
     border: 1px solid var(--line-strong);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 1px 2px rgba(19, 33, 60, 0.05);
   }
   .btn-secondary:hover:not(:disabled) {
     border-color: var(--accent);
@@ -272,11 +306,13 @@ button:not(:disabled), [role='button'], summary, select {
     align-items: center;
     gap: 0.375rem;
     font-weight: 600;
-    color: var(--accent);
-    transition: color 200ms;
+    color: var(--accent-ink);
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 4px;
+    transition: color 200ms, text-decoration-color 200ms;
   }
-  .link-accent:hover { color: var(--accent-strong); }
-  .link-accent svg { transition: transform 250ms var(--ease-out-expo); }
+  .link-accent:hover { color: var(--accent-ink-strong); text-decoration-color: var(--accent); }
+  .link-accent svg { color: var(--accent); transition: transform 250ms var(--ease-out-expo); }
   .link-accent:hover svg { transform: translateX(3px); }
 
   /* Cards --------------------------------------------------------- */
@@ -310,7 +346,7 @@ button:not(:disabled), [role='button'], summary, select {
     pointer-events: none;
     opacity: 0;
     transition: opacity 400ms var(--ease-out-expo);
-    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(34, 211, 238, 0.09), transparent 45%);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(252, 163, 17, 0.09), transparent 45%);
   }
   @media (hover: hover) {
     .spotlight:hover::after { opacity: 1; }
@@ -324,9 +360,10 @@ button:not(:disabled), [role='button'], summary, select {
     height: 3rem;
     border-radius: 0.875rem;
     color: var(--accent);
-    background: var(--accent-soft);
-    border: 1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+    background: var(--navy);
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   }
+  .dark .icon-tile { background: var(--accent-soft); }
 
   .chip {
     display: inline-flex;
@@ -342,7 +379,7 @@ button:not(:disabled), [role='button'], summary, select {
     border: 1px solid var(--line);
   }
   .chip-accent {
-    color: var(--accent);
+    color: var(--accent-ink);
     background: var(--accent-soft);
     border-color: color-mix(in oklab, var(--accent) 25%, transparent);
   }
@@ -368,15 +405,15 @@ button:not(:disabled), [role='button'], summary, select {
     font-size: 1rem;
     color: var(--fg);
     background: var(--bg-elevated);
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--field-border);
     transition: border-color 200ms, box-shadow 200ms, background-color 200ms;
   }
   .field::placeholder { color: var(--fg-subtle); opacity: 0.85; }
-  .field:hover { border-color: var(--fg-subtle); }
+  .field:hover { border-color: var(--fg-muted); }
   .field:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--accent-soft);
+    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.35);
   }
   .field[aria-invalid='true'] {
     border-color: #ef4444;
@@ -385,7 +422,7 @@ button:not(:disabled), [role='button'], summary, select {
   select.field {
     appearance: none;
     padding-right: 2.5rem;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23898f9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.875rem center;
   }
@@ -498,7 +535,7 @@ button:not(:disabled), [role='button'], summary, select {
 
 .orbit-label { will-change: transform, opacity; }
 .orbit-label[data-active='true'] {
-  color: var(--accent);
+  color: var(--accent-ink);
   border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
 }
 

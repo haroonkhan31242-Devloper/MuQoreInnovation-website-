@@ -80,13 +80,13 @@ export const RegionalPricingSection: React.FC<RegionalPricingSectionProps> = ({ 
                   title={c.name}
                   onClick={() => select(c.code)}
                   className={`relative min-h-10 rounded-xl px-3.5 text-sm font-semibold tabular-nums transition-colors ${
-                    active ? 'text-[#04131a]' : 'text-fg-muted hover:text-fg'
+                    active ? 'text-on-accent' : 'text-fg-muted hover:text-fg'
                   }`}
                 >
                   {active && (
                     <motion.span
                       layoutId="currency-pill"
-                      className="absolute inset-0 rounded-xl bg-[linear-gradient(180deg,#4fe0f5,#22d3ee)]"
+                      className="absolute inset-0 rounded-xl bg-accent"
                       transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                       aria-hidden="true"
                     />
@@ -114,11 +114,11 @@ export const RegionalPricingSection: React.FC<RegionalPricingSectionProps> = ({ 
               }`}
             >
               {plan.popular && (
-                <span className="absolute -top-3 left-7 rounded-full bg-[linear-gradient(180deg,#4fe0f5,#22d3ee)] px-3 py-1 text-xs font-bold text-[#04131a]">
+                <span className="absolute -top-3 left-7 rounded-full bg-accent px-3 py-1 text-xs font-bold text-on-accent">
                   Most popular
                 </span>
               )}
-              <p className="text-sm font-semibold text-accent">{plan.badge}</p>
+              <p className="text-sm font-semibold text-accent-ink">{plan.badge}</p>
               <h3 className="mt-2 text-2xl font-semibold text-fg">{plan.name}</h3>
               <p className="mt-3 text-[0.9375rem] leading-relaxed text-fg-muted">{plan.shortDescription}</p>
 
@@ -158,7 +158,7 @@ export const RegionalPricingSection: React.FC<RegionalPricingSectionProps> = ({ 
               <ul className="mt-6 space-y-3">
                 {plan.features.map((f) => (
                   <li key={f} className="flex gap-3 text-[0.9375rem] text-fg-muted">
-                    <Check className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent" aria-hidden="true" />
+                    <Check className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent-ink" aria-hidden="true" />
                     <span>{f}</span>
                   </li>
                 ))}
@@ -176,7 +176,7 @@ export const RegionalPricingSection: React.FC<RegionalPricingSectionProps> = ({ 
         </RevealGroup>
 
         <Reveal className="mt-10 flex gap-3 rounded-2xl border border-line bg-surface-2/60 p-5 text-sm leading-relaxed text-fg-muted">
-          <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" aria-hidden="true" />
           <p>
             Prices shown for Pakistan (PKR 40,000–50,000 for Basic Websites and PKR 100,000–200,000 for Advanced
             Websites) are indicative reference ranges. Other currencies are approximate conversions from these figures.

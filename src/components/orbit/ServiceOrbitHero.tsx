@@ -86,8 +86,8 @@ export const ServiceOrbitHero: React.FC<ServiceOrbitHeroProps> = ({ intro, isDar
 const HeroBackdrop: React.FC = () => (
   <div className="pointer-events-none absolute inset-0" aria-hidden="true">
     <div className="absolute inset-0 bg-grid" />
-    <div className="aurora-a absolute -left-[10%] top-[-20%] h-[520px] w-[620px] max-w-[120vw] rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.22),transparent)] blur-2xl" />
-    <div className="aurora-b absolute right-[-10%] top-[10%] h-[520px] w-[620px] max-w-[120vw] rounded-full bg-[radial-gradient(closest-side,rgba(59,130,246,0.2),transparent)] blur-2xl" />
+    <div className="aurora-a absolute -left-[10%] top-[-20%] h-[520px] w-[620px] max-w-[120vw] rounded-full bg-[radial-gradient(closest-side,rgba(252,163,17,0.16),transparent)] blur-2xl" />
+    <div className="aurora-b absolute right-[-10%] top-[10%] h-[520px] w-[620px] max-w-[120vw] rounded-full bg-[radial-gradient(closest-side,rgba(19,33,60,0.3),transparent)] blur-2xl" />
   </div>
 );
 
@@ -162,7 +162,7 @@ const OrbitTrack: React.FC<{ intro: React.ReactNode; isDark: boolean; lowPower: 
                   aria-label={`Show ${s.name}`}
                   aria-current={i === active ? 'step' : undefined}
                   className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 lg:h-9 lg:w-9 ${
-                    i === active ? 'bg-accent text-[var(--bg)]' : 'text-fg-subtle hover:bg-surface-2 hover:text-fg'
+                    i === active ? 'bg-accent text-on-accent' : 'text-fg-subtle hover:bg-surface-2 hover:text-fg'
                   }`}
                 >
                   <ServiceIcon name={s.iconName} className="h-4 w-4" />
@@ -193,7 +193,7 @@ const OrbitTrack: React.FC<{ intro: React.ReactNode; isDark: boolean; lowPower: 
                     </div>
                   </div>
                   <div className="min-w-0 lg:p-7">
-                    <p className="font-mono text-[0.6875rem] font-semibold tracking-[0.14em] text-accent">
+                    <p className="font-mono text-[0.6875rem] font-semibold tracking-[0.14em] text-accent-ink">
                       {String(active + 1).padStart(2, '0')} / {String(orbitServices.length).padStart(2, '0')}
                     </p>
                     <h2 className="mt-1 font-display text-lg font-bold leading-snug text-fg sm:text-xl lg:mt-2 lg:text-2xl">
@@ -248,7 +248,7 @@ const OrbitTrack: React.FC<{ intro: React.ReactNode; isDark: boolean; lowPower: 
         <button
           type="button"
           onClick={() => scrollToProgress(progressForService(0))}
-          className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-fg-subtle transition-colors hover:text-accent"
+          className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-fg-subtle transition-colors hover:text-accent-ink"
         >
           Scroll to explore<span className="hidden sm:inline"> our services</span>
           <ArrowDown className="h-4 w-4 animate-bounce" aria-hidden="true" />

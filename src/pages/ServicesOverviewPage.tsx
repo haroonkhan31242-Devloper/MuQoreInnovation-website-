@@ -117,13 +117,13 @@ export const ServicesOverviewPage: React.FC = () => {
                     <ul className="mt-5 grid gap-4 sm:grid-cols-2">
                       {svc.keyCapabilities.slice(0, 4).map((cap) => (
                         <li key={cap} className="flex gap-3 text-[0.9375rem] leading-relaxed text-fg-muted">
-                          <Check className="mt-1 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                          <Check className="mt-1 h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
                           <span>{cap}</span>
                         </li>
                       ))}
                     </ul>
                     <div className="mt-8 rounded-xl border border-line bg-surface p-5">
-                      <p className="text-sm font-semibold text-accent">{svc.caseStudy.clientType}</p>
+                      <p className="text-sm font-semibold text-accent-ink">{svc.caseStudy.clientType}</p>
                       <p className="mt-2 text-[0.9375rem] leading-relaxed text-fg-muted">{svc.caseStudy.challenge}</p>
                       <ul className="mt-4 flex flex-wrap gap-2">
                         {svc.caseStudy.results.map((r) => (

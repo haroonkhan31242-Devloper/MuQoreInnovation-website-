@@ -38,7 +38,7 @@ export const ServiceDetailPage: React.FC = () => {
         media={
           SERVICE_IMAGES[service.slug] && (
             <div className="relative">
-              <div className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(34,211,238,0.18),transparent)] blur-2xl" aria-hidden="true" />
+              <div className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(252,163,17,0.18),transparent)] blur-2xl" aria-hidden="true" />
               <SmartImage
                 key={service.slug}
                 {...SERVICE_IMAGES[service.slug]}
@@ -74,7 +74,7 @@ export const ServiceDetailPage: React.FC = () => {
             <ul className="mt-7 space-y-4">
               {service.keyCapabilities.map((cap) => (
                 <li key={cap} className="flex gap-3 text-[0.9375rem] leading-relaxed text-fg-muted sm:text-base">
-                  <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                  <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" aria-hidden="true" />
                   <span>{cap}</span>
                 </li>
               ))}
@@ -87,7 +87,7 @@ export const ServiceDetailPage: React.FC = () => {
             <ul className="mt-7 space-y-3.5">
               {service.architectureHighlights.map((h) => (
                 <li key={h} className="flex gap-3 text-[0.9375rem] leading-relaxed text-fg-muted">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
                   <span>{h}</span>
                 </li>
               ))}
@@ -128,25 +128,25 @@ export const ServiceDetailPage: React.FC = () => {
       {/* Case study */}
       <section className="pb-20 lg:pb-28">
         <div className="container-x">
-          <Reveal className="relative overflow-hidden rounded-3xl border border-line bg-[linear-gradient(135deg,#071a2b_0%,#0a1230_60%,#0d0a2a_100%)] p-7 text-white sm:p-12">
-            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-400/15 blur-3xl" aria-hidden="true" />
-            <p className="relative text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Representative case</p>
+          <Reveal className="relative overflow-hidden rounded-3xl border border-line bg-[linear-gradient(135deg,#13213c_0%,#0b1323_55%,#000000_100%)] p-7 text-white sm:p-12">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-orange/15 blur-3xl" aria-hidden="true" />
+            <p className="relative text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">Representative case</p>
             <h2 className="relative mt-3 max-w-3xl font-display text-2xl font-bold tracking-tight sm:text-3xl">
               {service.caseStudy.clientType}
             </h2>
             <div className="relative mt-8 grid gap-8 md:grid-cols-2">
               <div>
-                <h3 className="text-sm font-semibold text-cyan-300 font-sans tracking-normal">The challenge</h3>
-                <p className="mt-2 leading-relaxed text-slate-300">{service.caseStudy.challenge}</p>
+                <h3 className="text-sm font-semibold text-brand-orange font-sans tracking-normal">The challenge</h3>
+                <p className="mt-2 leading-relaxed text-brand-gray">{service.caseStudy.challenge}</p>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-cyan-300 font-sans tracking-normal">Our solution</h3>
-                <p className="mt-2 leading-relaxed text-slate-300">{service.caseStudy.solution}</p>
+                <h3 className="text-sm font-semibold text-brand-orange font-sans tracking-normal">Our solution</h3>
+                <p className="mt-2 leading-relaxed text-brand-gray">{service.caseStudy.solution}</p>
               </div>
             </div>
             <ul className="relative mt-8 grid gap-3 border-t border-white/10 pt-8 sm:grid-cols-3">
               {service.caseStudy.results.map((r) => (
-                <li key={r} className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-medium text-cyan-100">
+                <li key={r} className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-medium text-white">
                   {r}
                 </li>
               ))}
@@ -169,7 +169,7 @@ export const ServiceDetailPage: React.FC = () => {
       <nav aria-label="More services" className="border-t border-line">
         <div className="container-x grid gap-4 py-10 sm:grid-cols-2">
           <Link to={`/services/${prev.slug}`} className="card card-interactive group flex items-center gap-4 p-5">
-            <ArrowLeft className="h-5 w-5 shrink-0 text-fg-subtle transition-transform group-hover:-translate-x-1 group-hover:text-accent" aria-hidden="true" />
+            <ArrowLeft className="h-5 w-5 shrink-0 text-fg-subtle transition-transform group-hover:-translate-x-1 group-hover:text-accent-ink" aria-hidden="true" />
             <span>
               <span className="block text-xs font-semibold uppercase tracking-wider text-fg-subtle">Previous</span>
               <span className="mt-1 block font-semibold text-fg">{prev.title}</span>
@@ -180,7 +180,7 @@ export const ServiceDetailPage: React.FC = () => {
               <span className="block text-xs font-semibold uppercase tracking-wider text-fg-subtle">Next</span>
               <span className="mt-1 block font-semibold text-fg">{next.title}</span>
             </span>
-            <ArrowRight className="h-5 w-5 shrink-0 text-fg-subtle transition-transform group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true" />
+            <ArrowRight className="h-5 w-5 shrink-0 text-fg-subtle transition-transform group-hover:translate-x-1 group-hover:text-accent-ink" aria-hidden="true" />
           </Link>
         </div>
       </nav>

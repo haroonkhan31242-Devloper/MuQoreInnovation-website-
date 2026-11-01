@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
             <BrandMark size={42} />
             <span className="flex flex-col leading-none">
               <span className="font-display text-xl font-bold tracking-tight text-fg">
-                MuQore<span className="text-accent">.</span>
+                MuQore<span className="text-accent-ink">.</span>
               </span>
               <span className="mt-1 text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-fg-subtle">
                 Innovation
@@ -163,7 +163,7 @@ export const Header: React.FC = () => {
                                           <ServiceIcon name={svc.iconName} className="h-[18px] w-[18px]" />
                                         </span>
                                         <span className="min-w-0">
-                                          <span className="block text-sm font-semibold text-fg group-hover:text-accent">
+                                          <span className="block text-sm font-semibold text-fg group-hover:text-accent-ink">
                                             {svc.title}
                                           </span>
                                           <span className="mt-0.5 line-clamp-1 block text-[0.8125rem] text-fg-subtle">
@@ -262,7 +262,7 @@ export const Header: React.FC = () => {
                         <div className="flex items-center">
                           <Link
                             to={item.to}
-                            className={`flex-1 rounded-xl px-4 py-3.5 text-lg font-semibold ${active ? 'text-accent' : 'text-fg'}`}
+                            className={`flex-1 rounded-xl px-4 py-3.5 text-lg font-semibold ${active ? 'text-accent-ink' : 'text-fg'}`}
                           >
                             {item.label}
                           </Link>
@@ -292,7 +292,7 @@ export const Header: React.FC = () => {
                                   to={`/services/${s.slug}`}
                                   className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-[0.9375rem] text-fg-muted hover:bg-surface-2 hover:text-fg"
                                 >
-                                  <ServiceIcon name={s.iconName} className="h-4 w-4 text-accent" />
+                                  <ServiceIcon name={s.iconName} className="h-4 w-4 text-accent-ink" />
                                   {s.title}
                                 </Link>
                               </li>
@@ -307,7 +307,7 @@ export const Header: React.FC = () => {
                       <Link
                         to={item.to}
                         aria-current={active ? 'page' : undefined}
-                        className={`block rounded-xl px-4 py-3.5 text-lg font-semibold ${active ? 'text-accent' : 'text-fg'}`}
+                        className={`block rounded-xl px-4 py-3.5 text-lg font-semibold ${active ? 'text-accent-ink' : 'text-fg'}`}
                       >
                         {item.label}
                       </Link>

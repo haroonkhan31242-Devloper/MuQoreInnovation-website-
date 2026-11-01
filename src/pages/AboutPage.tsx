@@ -104,7 +104,7 @@ export const AboutPage: React.FC = () => {
           <RevealGroup as="ol" className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {principles.map((p, i) => (
               <motion.li key={p.title} variants={revealItem} className="card card-interactive p-6">
-                <span className="font-display text-sm font-semibold tabular-nums text-accent">
+                <span className="font-display text-sm font-semibold tabular-nums text-accent-ink">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-4 text-lg font-semibold text-fg">{p.title}</h3>

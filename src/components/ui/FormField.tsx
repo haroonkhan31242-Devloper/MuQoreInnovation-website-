@@ -22,7 +22,7 @@ export const FormField: React.FC<FormFieldProps> = ({ label, required, hint, err
       <label htmlFor={id} className="field-label">
         {label}
         {required ? (
-          <span className="ml-0.5 text-accent" aria-hidden="true">*</span>
+          <span className="ml-0.5 text-accent-ink" aria-hidden="true">*</span>
         ) : (
           <span className="ml-1.5 text-xs font-normal text-fg-subtle">(optional)</span>
         )}

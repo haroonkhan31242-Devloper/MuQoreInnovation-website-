@@ -6,28 +6,26 @@ import { Modal } from '../ui/Modal';
 import { FormField, isValidEmail } from '../ui/FormField';
 import { servicesData } from '../../data/servicesData';
 import { CONTACT, mailtoHref } from '../../config/contact';
+import { EmailSendError, SUCCESS_MESSAGE, isValidPhone, sendSubmission } from '../../services/emailService';
 
 const EMPTY = { name: '', email: '', phone: '', serviceSlug: 'website-development', message: '', website: '' };
-type Errors = Partial<Record<'name' | 'email' | 'message', string>>;
+type Errors = Partial<Record<'name' | 'email' | 'phone' | 'message', string>>;
 
 /**
- * Short project inquiry that works from any page. It posts to the same
- * /api/quote endpoint as the full quote form, so it is emailed to the team.
+ * Short project inquiry that works from any page. It is emailed to the team
+ * through the shared EmailJS service, like the full quote form.
  */
 export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [serverMessage, setServerMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [referenceId, setReferenceId] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Start fresh each time after a completed submission
+  // Show the empty form again when reopened after a completed submission
   useEffect(() => {
-    if (open && status === 'success') {
-      setForm(EMPTY);
-      setStatus('idle');
-    }
+    if (open && status === 'success') setStatus('idle');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -38,10 +36,12 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'submitting') return;
     const er: Errors = {};
     if (!form.name.trim()) er.name = 'Please enter your name.';
     if (!form.email.trim()) er.email = 'Please enter your email address.';
     else if (!isValidEmail(form.email)) er.email = 'Please enter a valid email, like name@company.com.';
+    if (!isValidPhone(form.phone)) er.phone = 'Please enter a valid phone number, like +92 333 1166607.';
     if (form.message.trim().length < 15) er.message = 'Please describe your idea in a sentence or two.';
     setErrors(er);
     if (Object.keys(er).length) {
@@ -51,31 +51,25 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
 
     setStatus('submitting');
     const generatedRef = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    const serviceTitle = servicesData.find((sv) => sv.slug === form.serviceSlug)?.title ?? form.serviceSlug;
     try {
-      const res = await fetch('/api/quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          serviceSlug: form.serviceSlug,
-          budgetRange: 'Not specified',
-          timeline: 'Not specified',
-          projectDescription: form.message,
-          featuresNeeded: [],
-          referenceId: generatedRef,
-          website: form.website,
-        }),
+      await sendSubmission({
+        formType: 'Project inquiry',
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        subject: `Project inquiry ${generatedRef}: ${serviceTitle}`,
+        service: serviceTitle,
+        projectDescription: form.message,
+        referenceId: generatedRef,
+        website: form.website,
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) {
-        setServerMessage(res.status === 429 ? data.message : '');
-        throw new Error(data.message);
-      }
-      setReferenceId(data.referenceId || generatedRef);
+      setReferenceId(generatedRef);
+      // Clear only once EmailJS has confirmed delivery
+      setForm(EMPTY);
       setStatus('success');
-    } catch {
+    } catch (err) {
+      setErrorMessage(err instanceof EmailSendError ? err.message : "We couldn't send your inquiry.");
       setStatus('error');
     }
   };
@@ -90,12 +84,12 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
                 <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
               </span>
               <h2 id="inquiry-title" className="mt-5 text-2xl font-bold text-fg">
-                Thanks, {form.name.split(' ')[0]}. We've got it.
+                Inquiry sent
               </h2>
+              <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">{SUCCESS_MESSAGE}</p>
               <p className="mx-auto mt-3 max-w-md leading-relaxed text-fg-muted">
-                Your project inquiry was sent to our team. Your reference is{' '}
-                <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent">{referenceId}</strong>. We'll
-                reply to {form.email}.
+                Your reference is{' '}
+                <strong className="rounded-md bg-accent-soft px-2 py-0.5 font-mono text-accent-ink">{referenceId}</strong>.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <button type="button" onClick={onClose} className="btn btn-primary">
@@ -120,7 +114,7 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
                 <div role="alert" className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
                   <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                   <p>
-                    {serverMessage || "We couldn't send your inquiry."} You can also email{' '}
+                    {errorMessage} Your details are still in the form. You can also email{' '}
                     <a href={mailtoHref('Project inquiry')} className="font-semibold underline">
                       {CONTACT.email}
                     </a>{' '}
@@ -145,7 +139,7 @@ export const ProjectInquiryDialog: React.FC<{ open: boolean; onClose: () => void
                     <input {...p} type="email" inputMode="email" autoComplete="email" className="field" value={form.email} onChange={(e) => set('email', e.target.value)} />
                   )}
                 </FormField>
-                <FormField label="Phone">
+                <FormField label="Phone" error={errors.phone}>
                   {(p) => <input {...p} type="tel" inputMode="tel" autoComplete="tel" className="field" value={form.phone} onChange={(e) => set('phone', e.target.value)} />}
                 </FormField>
                 <FormField label="Service">
