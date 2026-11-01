@@ -4,7 +4,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, ChevronDown, Menu, Moon, Sparkles, Sun, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { useChat } from '../../context/ChatContext';
+import { AskAiTrigger } from '../chat/AskAiTrigger';
+import { FEATURES } from '../../config/features';
 import { servicesData } from '../../data/servicesData';
 import { ServiceIcon } from '../ui/ServiceIcon';
 import { BrandMark } from '../brand/BrandMark';
@@ -20,7 +21,6 @@ const NAV = [
 
 export const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { openChat } = useChat();
   const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -204,14 +204,12 @@ export const Header: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => openChat()}
-              className="btn btn-ghost btn-sm hidden xl:inline-flex"
-            >
-              <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
-              Ask AI
-            </button>
+            {FEATURES.aiAssistant && (
+              <AskAiTrigger className="btn btn-ghost btn-sm hidden xl:inline-flex">
+                <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
+                Ask AI
+              </AskAiTrigger>
+            )}
             <button
               type="button"
               onClick={toggleTheme}
@@ -327,17 +325,12 @@ export const Header: React.FC = () => {
               </ul>
 
               <div className="mt-auto space-y-3 pt-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    openChat();
-                  }}
-                  className="btn btn-secondary w-full"
-                >
-                  <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
-                  Ask the AI assistant
-                </button>
+                {FEATURES.aiAssistant && (
+                  <AskAiTrigger onOpen={() => setMobileOpen(false)} className="btn btn-secondary w-full">
+                    <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
+                    Ask the AI assistant
+                  </AskAiTrigger>
+                )}
                 <Link to="/get-a-quote" className="btn btn-primary w-full">
                   Get a Quote
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />

@@ -6,7 +6,8 @@ import { Reveal } from '../components/ui/Reveal';
 import { FormField, isValidEmail } from '../components/ui/FormField';
 import { usePageMeta } from '../components/ui/usePageMeta';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../config/contact';
-import { useChat } from '../context/ChatContext';
+import { AskAiTrigger } from '../components/chat/AskAiTrigger';
+import { FEATURES } from '../config/features';
 
 const EMPTY = { name: '', email: '', phone: '', subject: 'General Inquiry', message: '', website: '' };
 type Errors = Partial<Record<'name' | 'email' | 'message', string>>;
@@ -25,7 +26,6 @@ const TOPICS = [
 
 export const ContactPage: React.FC = () => {
   usePageMeta('Contact', `Contact MuQore Innovation by email at ${CONTACT.email} or phone.`);
-  const { openChat } = useChat();
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -120,18 +120,20 @@ export const ContactPage: React.FC = () => {
               </div>
             </div>
 
-            <button type="button" onClick={() => openChat()} className="card card-interactive group flex w-full items-start gap-4 p-6 text-left">
-              <span className="icon-tile shrink-0">
-                <Sparkles className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span>
-                <span className="block text-sm font-semibold text-fg-subtle">Instant answers</span>
-                <span className="mt-1 block text-base font-semibold text-fg group-hover:text-accent">
-                  Chat with our AI assistant
+            {FEATURES.aiAssistant && (
+              <AskAiTrigger className="card card-interactive group flex w-full items-start gap-4 p-6 text-left">
+                <span className="icon-tile shrink-0">
+                  <Sparkles className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <span className="mt-1 block text-sm text-fg-muted">English, اردو and Roman Urdu</span>
-              </span>
-            </button>
+                <span>
+                  <span className="block text-sm font-semibold text-fg-subtle">Instant answers</span>
+                  <span className="mt-1 block text-base font-semibold text-fg group-hover:text-accent">
+                    Chat with our AI assistant
+                  </span>
+                  <span className="mt-1 block text-sm text-fg-muted">English, اردو and Roman Urdu</span>
+                </span>
+              </AskAiTrigger>
+            )}
 
             <div className="flex gap-3 rounded-2xl border border-line bg-surface-2/60 p-5 text-sm leading-relaxed text-fg-muted">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />

@@ -4,6 +4,7 @@ import fs from 'fs';
 import net from 'net';
 import { fileURLToPath } from 'url';
 import { app, isAiConfigured } from './app.js';
+import { FEATURES } from './src/config/features.js';
 import { isMailConfigured } from './mailer.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -83,7 +84,7 @@ async function startServer() {
   const targetPort = await findAvailablePort(PORT, '127.0.0.1');
 
   const server = app.listen(targetPort, HOST, () => {
-    if (!isAiConfigured()) {
+    if (FEATURES.aiAssistant && !isAiConfigured()) {
       console.warn('  [MuQore Server] GEMINI_API_KEY is NOT set: the chatbot can only answer company questions from saved data (limited mode)');
     }
     if (!isMailConfigured()) {

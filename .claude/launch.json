@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "muqore-prod",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-Command", "$env:NODE_ENV='production'; $env:PORT='3100'; npx tsx server.ts"],
+      "port": 3100
     }
   ]
 }

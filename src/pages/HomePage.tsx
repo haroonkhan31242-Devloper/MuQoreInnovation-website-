@@ -17,7 +17,8 @@ import { usePageMeta } from '../components/ui/usePageMeta';
 import { servicesData } from '../data/servicesData';
 import { portfolioData } from '../data/portfolioData';
 import { useTheme } from '../context/ThemeContext';
-import { useChat } from '../context/ChatContext';
+import { AskAiTrigger } from '../components/chat/AskAiTrigger';
+import { FEATURES } from '../config/features';
 
 const heroContainer: Variants = {
   hidden: {},
@@ -32,7 +33,7 @@ const stats = [
   { value: '8', label: 'Core engineering services' },
   { value: '45+', label: 'Production systems deployed' },
   { value: '5', label: 'Stage delivery process' },
-  { value: 'EN · اردو', label: 'Bilingual AI assistant' },
+  { value: 'EN · اردو', label: FEATURES.aiAssistant ? 'Bilingual AI assistant' : 'Support in English & Urdu' },
 ];
 
 const strengths = [
@@ -55,7 +56,6 @@ const strengths = [
 
 export const HomePage: React.FC = () => {
   const { theme } = useTheme();
-  const { openChat } = useChat();
   const onSpot = useSpotlight();
   usePageMeta('', 'MuQore Innovation builds websites, mobile and desktop applications, AI automation, APIs and backend systems.');
 
@@ -103,12 +103,14 @@ export const HomePage: React.FC = () => {
               </Link>
             </motion.div>
 
-            <motion.div variants={heroItem} className="mt-6">
-              <button type="button" onClick={() => openChat()} className="link-accent text-sm">
-                <Sparkles className="h-4 w-4" aria-hidden="true" />
-                Questions? Ask our AI assistant in English or اردو
-              </button>
-            </motion.div>
+            {FEATURES.aiAssistant && (
+              <motion.div variants={heroItem} className="mt-6">
+                <AskAiTrigger className="link-accent text-sm">
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  Questions? Ask our AI assistant in English or اردو
+                </AskAiTrigger>
+              </motion.div>
+            )}
           </motion.div>
         }
       />

@@ -10,6 +10,7 @@ import {
 } from './src/data/chatbotKnowledge.js';
 import { servicesData } from './src/data/servicesData.js';
 import { isMailConfigured, isRateLimited, sendSubmissionEmail } from './mailer.js';
+import { FEATURES } from './src/config/features.js';
 
 dotenv.config();
 
@@ -28,8 +29,18 @@ app.use(express.json({ limit: '25mb' }));
 
 // Initialize Google GenAI client
 const apiKey = process.env.GEMINI_API_KEY || '';
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+const ai = FEATURES.aiAssistant && apiKey ? new GoogleGenAI({ apiKey }) : null;
 export const isAiConfigured = () => Boolean(ai);
+
+// While the AI module is switched off its routes answer 404, as if absent
+const AI_ROUTES = ['/api/chat', '/api/generate-image', '/api/generate-video'];
+app.use((req: Request, res: Response, next) => {
+  if (!FEATURES.aiAssistant && AI_ROUTES.some((r) => req.path === r || req.path.startsWith(`${r}/`))) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+  next();
+});
 
 // ==========================================
 // 1. Image Generation & Editing API Endpoint

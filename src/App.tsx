@@ -8,6 +8,10 @@ import { Footer } from './components/common/Footer';
 import { ChatLauncher } from './components/chat/ChatLauncher';
 import { MuQoreChatModal } from './components/chat/MuQoreChatModal';
 import { HomePage } from './pages/HomePage';
+import { FEATURES } from './config/features';
+
+// The AI module stays in the codebase but is mounted only when enabled
+const AiProvider = FEATURES.aiAssistant ? ChatProvider : React.Fragment;
 
 // Secondary routes are split out so the home page loads first
 const ServicesOverviewPage = lazy(() => import('./pages/ServicesOverviewPage').then((m) => ({ default: m.ServicesOverviewPage })));
@@ -78,7 +82,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <ChatProvider>
+      <AiProvider>
         <MotionConfig reducedMotion="user">
           <BrowserRouter>
             <RouteEffects mainRef={mainRef} />
@@ -94,12 +98,16 @@ export default function App() {
                 <AnimatedRoutes />
               </main>
               <Footer />
-              <ChatLauncher />
-              <MuQoreChatModal />
+              {FEATURES.aiAssistant && (
+                <>
+                  <ChatLauncher />
+                  <MuQoreChatModal />
+                </>
+              )}
             </div>
           </BrowserRouter>
         </MotionConfig>
-      </ChatProvider>
+      </AiProvider>
     </ThemeProvider>
   );
 }

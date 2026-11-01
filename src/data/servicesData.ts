@@ -1,4 +1,5 @@
 import type { ServiceItem } from '../types/index.js';
+import { FEATURES } from '../config/features.js';
 
 export const servicesData: ServiceItem[] = [
   {
@@ -276,10 +277,13 @@ export const servicesData: ServiceItem[] = [
         question: 'How do you prevent AI models from generating incorrect answers (hallucinations)?',
         answer: 'We deploy strict retrieval grounding: models are restricted to your verified knowledge documents, required to provide verifiable citations, and checked by secondary validation guardrails.'
       },
-      {
-        question: 'Can we try out live AI capabilities directly on your website?',
-        answer: 'Yes! You can interact directly with our integrated Multilingual AI Assistant across the website to ask any architectural, technical, or scoping questions in real time.'
-      }
+      // Points visitors at the on-site assistant, so it is listed only while that module is on
+      ...(FEATURES.aiAssistant
+        ? [{
+            question: 'Can we try out live AI capabilities directly on your website?',
+            answer: 'Yes! You can interact directly with our integrated Multilingual AI Assistant across the website to ask any architectural, technical, or scoping questions in real time.'
+          }]
+        : [])
     ]
   },
   {
