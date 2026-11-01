@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, type Variants } from 'motion/react';
-import { ArrowRight, ArrowUpRight, Check, Cpu, Layers, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Cpu, Layers, ShieldCheck } from 'lucide-react';
 import { AnimatedLogoCard } from '../components/brand/AnimatedLogoCard';
 import { ServiceOrbitHero } from '../components/orbit/ServiceOrbitHero';
 import { ProcessSection } from '../components/home/ProcessSection';
@@ -17,8 +17,6 @@ import { usePageMeta } from '../components/ui/usePageMeta';
 import { servicesData } from '../data/servicesData';
 import { portfolioData } from '../data/portfolioData';
 import { useTheme } from '../context/ThemeContext';
-import { AskAiTrigger } from '../components/chat/AskAiTrigger';
-import { FEATURES } from '../config/features';
 
 const heroContainer: Variants = {
   hidden: {},
@@ -33,7 +31,7 @@ const stats = [
   { value: '8', label: 'Core engineering services' },
   { value: '45+', label: 'Production systems deployed' },
   { value: '5', label: 'Stage delivery process' },
-  { value: 'EN · اردو', label: FEATURES.aiAssistant ? 'Bilingual AI assistant' : 'Support in English & Urdu' },
+  { value: 'EN · اردو', label: 'Support in English & Urdu' },
 ];
 
 const strengths = [
@@ -103,14 +101,6 @@ export const HomePage: React.FC = () => {
               </Link>
             </motion.div>
 
-            {FEATURES.aiAssistant && (
-              <motion.div variants={heroItem} className="mt-6">
-                <AskAiTrigger className="link-accent text-sm">
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  Questions? Ask our AI assistant in English or اردو
-                </AskAiTrigger>
-              </motion.div>
-            )}
           </motion.div>
         }
       />

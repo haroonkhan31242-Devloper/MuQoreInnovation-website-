@@ -135,7 +135,6 @@ export class OrbitScene {
   private width = 1;
   private height = 1;
   private isDark: boolean;
-  private progress = 0;
   private tl: TimelineState = readTimeline(0);
   private clock = new THREE.Clock();
   private bornAt = performance.now();
@@ -550,7 +549,6 @@ export class OrbitScene {
   // ---------------------------------------------------------------- inputs
 
   setProgress(p: number) {
-    this.progress = p;
     this.tl = readTimeline(p);
     this.requestFrame();
   }

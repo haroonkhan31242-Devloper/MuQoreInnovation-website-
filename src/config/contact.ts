@@ -1,6 +1,6 @@
 /**
  * Official MuQore Innovation contact details.
- * Single source of truth for every page, the footer and the AI assistant.
+ * Single source of truth for every page, the footer and the email templates.
  *
  * WhatsApp is intentionally not configured: neither number has been
  * verified as WhatsApp-enabled. Add a `whatsapp` entry here (international

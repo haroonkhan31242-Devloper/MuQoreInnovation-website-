@@ -1,12 +1,9 @@
 /**
- * Verifies the live services the website depends on, without printing secrets.
+ * Verifies the email setup for the contact and quote forms, without printing
+ * secrets. Logs in to the SMTP server; no email is sent.
  *   npm run check-setup
- *
- * 1. Gemini AI (chatbot): sends one tiny test prompt with GEMINI_API_KEY.
- * 2. Email (contact + quote forms): logs in to the SMTP server; no email is sent.
  */
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
 import nodemailer from 'nodemailer';
 
 dotenv.config();
@@ -16,43 +13,6 @@ const fail = (msg: string, fix: string) => {
   console.log(`  \x1b[31m✘\x1b[0m ${msg}`);
   console.log(`    \x1b[33m→ ${fix}\x1b[0m`);
 };
-
-async function checkGemini(): Promise<boolean> {
-  console.log('\nAI chatbot (Gemini)');
-  const key = (process.env.GEMINI_API_KEY || '').trim();
-  if (/paste|your|MY_GEMINI/i.test(key)) {
-    fail('GEMINI_API_KEY still contains the example text, not a real key', 'Replace it with the key copied from https://aistudio.google.com/apikey (it usually starts with "AIza")');
-    return false;
-  }
-  if (!key) {
-    fail('GEMINI_API_KEY is empty in .env', 'Create a free key at https://aistudio.google.com/apikey and paste it between the quotes: GEMINI_API_KEY="..."');
-    return false;
-  }
-  ok(`GEMINI_API_KEY found (${key.length} characters)`);
-
-  const model = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
-  try {
-    const ai = new GoogleGenAI({ apiKey: key });
-    const res = await ai.models.generateContent({
-      model,
-      contents: 'Reply with exactly: OK',
-      config: { maxOutputTokens: 20, ...(model.includes('2.5') ? { thinkingConfig: { thinkingBudget: 0 } } : {}) },
-    });
-    if (res.text?.trim()) {
-      ok(`Gemini replied using model "${model}". The chatbot can answer general questions.`);
-      return true;
-    }
-    fail(`Gemini returned an empty reply (model "${model}")`, 'Try again in a minute; if it persists, set GEMINI_CHAT_MODEL="gemini-flash-latest" in .env');
-  } catch (err: any) {
-    const status = err?.status;
-    const msg = String(err?.message || err);
-    if (/API key not valid|API_KEY_INVALID/i.test(msg)) fail('Google rejected the API key', 'Copy the key again from https://aistudio.google.com/apikey (no spaces), or create a new one');
-    else if (status === 429 || /quota|RESOURCE_EXHAUSTED/i.test(msg)) fail('The key works but its usage limit is reached', 'Wait a minute and run this check again, or review limits in Google AI Studio');
-    else if (status === 404) fail(`Model "${model}" is not available for this key`, 'Set GEMINI_CHAT_MODEL="gemini-flash-latest" in .env');
-    else fail(`Could not reach Gemini (${status || 'network error'})`, 'Check the internet connection and try again');
-  }
-  return false;
-}
 
 async function checkEmail(): Promise<boolean> {
   console.log('\nEmail for contact and quote forms (SMTP)');
@@ -88,7 +48,6 @@ async function checkEmail(): Promise<boolean> {
   }
 }
 
-const ai = await checkGemini();
 const mail = await checkEmail();
-console.log(`\n${ai && mail ? '\x1b[32mAll set.' : '\x1b[33mSome settings still need attention.'}\x1b[0m Restart the server (npm run dev) after changing .env.\n`);
-process.exit(ai && mail ? 0 : 1);
+console.log(`\n${mail ? '\x1b[32mAll set.' : '\x1b[33mSome settings still need attention.'}\x1b[0m Restart the server (npm run dev) after changing .env.\n`);
+process.exit(mail ? 0 : 1);

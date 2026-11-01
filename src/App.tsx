@@ -2,16 +2,9 @@ import React, { Suspense, lazy, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MotionConfig, motion } from 'motion/react';
 import { ThemeProvider } from './context/ThemeContext';
-import { ChatProvider } from './context/ChatContext';
 import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
-import { ChatLauncher } from './components/chat/ChatLauncher';
-import { MuQoreChatModal } from './components/chat/MuQoreChatModal';
 import { HomePage } from './pages/HomePage';
-import { FEATURES } from './config/features';
-
-// The AI module stays in the codebase but is mounted only when enabled
-const AiProvider = FEATURES.aiAssistant ? ChatProvider : React.Fragment;
 
 // Secondary routes are split out so the home page loads first
 const ServicesOverviewPage = lazy(() => import('./pages/ServicesOverviewPage').then((m) => ({ default: m.ServicesOverviewPage })));
@@ -82,32 +75,24 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <AiProvider>
-        <MotionConfig reducedMotion="user">
-          <BrowserRouter>
-            <RouteEffects mainRef={mainRef} />
-            <a
-              href="#main"
-              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-fg focus:shadow-lg"
-            >
-              Skip to content
-            </a>
-            <div className="flex min-h-dvh flex-col bg-bg text-fg">
-              <Header />
-              <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
-                <AnimatedRoutes />
-              </main>
-              <Footer />
-              {FEATURES.aiAssistant && (
-                <>
-                  <ChatLauncher />
-                  <MuQoreChatModal />
-                </>
-              )}
-            </div>
-          </BrowserRouter>
-        </MotionConfig>
-      </AiProvider>
+      <MotionConfig reducedMotion="user">
+        <BrowserRouter>
+          <RouteEffects mainRef={mainRef} />
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-fg focus:shadow-lg"
+          >
+            Skip to content
+          </a>
+          <div className="flex min-h-dvh flex-col bg-bg text-fg">
+            <Header />
+            <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </MotionConfig>
     </ThemeProvider>
   );
 }

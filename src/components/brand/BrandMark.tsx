@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 
-export const LOGO_DARK = '/assets/aistudio/WhatsApp_Image_2026-10-28_at_11.23.39_AM__1__32561e21.jpeg';
-export const LOGO_LIGHT = '/assets/aistudio/WhatsApp_Image_2026-10-28_at_11.23.39_AM_58cbf8fc.jpeg';
+export const LOGO_DARK = '/assets/brand/logo-dark.jpeg';
+export const LOGO_LIGHT = '/assets/brand/logo-light.jpeg';
 
 /**
  * Crops the official MQ crest out of the supplied logo artwork so the

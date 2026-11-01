@@ -1,13 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { AlertCircle, CheckCircle2, Loader2, Mail, Phone, Send, ShieldCheck, Sparkles } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Mail, Phone, Send, ShieldCheck } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
 import { FormField, isValidEmail } from '../components/ui/FormField';
 import { usePageMeta } from '../components/ui/usePageMeta';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../config/contact';
-import { AskAiTrigger } from '../components/chat/AskAiTrigger';
-import { FEATURES } from '../config/features';
 
 const EMPTY = { name: '', email: '', phone: '', subject: 'General Inquiry', message: '', website: '' };
 type Errors = Partial<Record<'name' | 'email' | 'message', string>>;
@@ -120,20 +118,6 @@ export const ContactPage: React.FC = () => {
               </div>
             </div>
 
-            {FEATURES.aiAssistant && (
-              <AskAiTrigger className="card card-interactive group flex w-full items-start gap-4 p-6 text-left">
-                <span className="icon-tile shrink-0">
-                  <Sparkles className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-fg-subtle">Instant answers</span>
-                  <span className="mt-1 block text-base font-semibold text-fg group-hover:text-accent">
-                    Chat with our AI assistant
-                  </span>
-                  <span className="mt-1 block text-sm text-fg-muted">English, اردو and Roman Urdu</span>
-                </span>
-              </AskAiTrigger>
-            )}
 
             <div className="flex gap-3 rounded-2xl border border-line bg-surface-2/60 p-5 text-sm leading-relaxed text-fg-muted">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />

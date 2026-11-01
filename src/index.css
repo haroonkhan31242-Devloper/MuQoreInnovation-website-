@@ -48,7 +48,6 @@
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-urdu: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Noto Naskh Arabic', serif;
 
   --color-brand-cyan: #22d3ee;
   --color-brand-blue: #2563eb;
@@ -418,13 +417,6 @@ button:not(:disabled), [role='button'], summary, select {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--line-strong) 20%, var(--line-strong) 80%, transparent);
   }
-
-  /* Urdu / RTL text inside chat bubbles only */
-  .urdu {
-    font-family: var(--font-urdu);
-    line-height: 2.1;
-    font-size: 1.0625rem;
-  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -445,18 +437,6 @@ button:not(:disabled), [role='button'], summary, select {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
-@keyframes typing-dot {
-  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-2px); }
-}
-.typing-dot { animation: typing-dot 1.2s ease-in-out infinite; }
-
-@keyframes mic-ring {
-  0% { transform: scale(1); opacity: 0.55; }
-  100% { transform: scale(1.7); opacity: 0; }
-}
-.mic-ring { animation: mic-ring 1.4s ease-out infinite; }
 
 /* ------------------------------------------------------------------ */
 /* Service orbit: SVG service visuals + orbit labels                   */

@@ -35,23 +35,3 @@ export interface PortfolioItem {
   isDemonstration?: boolean;
   visualColor: string;
 }
-
-export interface QuoteFormData {
-  name: string;
-  email: string;
-  company?: string;
-  serviceId: string;
-  budgetRange: string;
-  timeline: string;
-  projectDescription: string;
-  featuresNeeded: string[];
-  agreeTerms: boolean;
-}
-
-export interface ContactFormData {
-  name: string;
-  email: string;
-  phone?: string;
-  subject: string;
-  message: string;
-}

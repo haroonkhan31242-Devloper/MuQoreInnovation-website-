@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUp, Mail, Phone, Sparkles } from 'lucide-react';
+import { ArrowUp, Mail, Phone } from 'lucide-react';
 import { servicesData } from '../../data/servicesData';
-import { AskAiTrigger } from '../chat/AskAiTrigger';
-import { FEATURES } from '../../config/features';
 import { CONTACT, emailParts, mailtoHref, telHref } from '../../config/contact';
 import { BrandMark } from '../brand/BrandMark';
 import { ProjectCta } from '../project/ProjectCta';
@@ -67,22 +65,13 @@ export const Footer: React.FC = () => {
                   </a>
                 </li>
               ))}
-              {FEATURES.aiAssistant && (
-                <li>
-                  <AskAiTrigger className="flex items-start gap-3 text-left text-fg-muted transition-colors hover:text-fg">
-                    <Sparkles className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent" aria-hidden="true" />
-                    <span>Chat with our AI assistant</span>
-                  </AskAiTrigger>
-                </li>
-              )}
             </ul>
           </div>
         </div>
 
         <div className="divider-glow mt-14" />
 
-        {/* Bottom padding keeps these links clear of the floating chat button */}
-        <div className={`mt-8 flex flex-col-reverse items-start justify-between gap-6 text-sm text-fg-subtle sm:flex-row sm:items-center ${FEATURES.aiAssistant ? 'pb-20 sm:pb-0 sm:pr-56' : ''}`}>
+        <div className="mt-8 flex flex-col-reverse items-start justify-between gap-6 text-sm text-fg-subtle sm:flex-row sm:items-center">
           <p>© {year} MuQore Innovation. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <Link to="/about" className="transition-colors hover:text-fg">About</Link>
