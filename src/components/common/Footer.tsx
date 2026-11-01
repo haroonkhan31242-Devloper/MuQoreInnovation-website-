@@ -7,7 +7,7 @@ import { BrandMark } from '../brand/BrandMark';
 import { ProjectCta } from '../project/ProjectCta';
 
 export const Footer: React.FC = () => {
-  const year = new Date().getFullYear();
+  const year = "2022";
 
   return (
     <footer className="relative mt-auto border-t border-line bg-bg-elevated">
